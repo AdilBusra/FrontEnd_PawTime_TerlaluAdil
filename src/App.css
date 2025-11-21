@@ -513,19 +513,27 @@ html, body {
 }
 
 .setup-input-group-new {
-    color: white;
+    color: white; 
     font-weight: 500;
     font-size: 16px;
+    
+    display: flex; 
+    gap: 10px; 
+    flex-direction: row;
+    
+    /* PERBAIKAN: Gunakan flex-start agar label sejajar dengan bagian atas textarea/input yang tinggi */
+    align-items: flex-start; 
 }
 
 .setup-input-group-new label {
-    display: block;
-    margin-bottom: 8px;
+    width: 120px; /* Lebar tetap untuk label agar input rata */
+    margin-bottom: 0; 
+    flex-shrink: 0;
 }
 
 .setup-form-new input:not([type="file"]),
 .setup-form-new textarea {
-    width: 100%;
+    flex : 1;
     padding: 10px;
     border: none;
     border-radius: 8px;
@@ -596,4 +604,109 @@ html, body {
 
 .setup-submit-button-new:hover {
     background-color: #7d96c4;
+}
+
+/* src/App.css (Revisi Warna PET OWNER SETUP PAGE STYLES) */
+
+/* --- PET OWNER SETUP PAGE STYLES --- */
+
+.owner-setup-content-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    padding: 60px 80px;
+    gap: 100px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Kiri: Welcome Text */
+.owner-setup-welcome-text {
+    flex: 1;
+    max-width: 450px;
+}
+
+.owner-setup-welcome-heading {
+    font-size: 40px;
+    font-weight: 700;
+    color: #4A69BB; /* Ganti dari Pink ke BIRU TUA */
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
+
+.owner-setup-welcome-subtext {
+    font-size: 20px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Kanan: Kotak Formulir Utama */
+.owner-setup-form-box-new {
+    width: 450px;
+    background-color: #4A69BB; /* Ganti dari Pink ke BIRU TUA */
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+}
+
+.owner-setup-form-new {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.owner-setup-form-new h3 {
+    color: white; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5); 
+    padding-bottom: 5px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+.owner-input-group-new {
+    color: white; 
+    font-weight: 500;
+    font-size: 16px;
+    
+    display: flex; 
+    align-items: flex-start;
+    gap: 10px; 
+}
+
+.owner-input-group-new label {
+    width: 120px; 
+    margin-bottom: 0; 
+    flex-shrink: 0; 
+}
+
+.owner-setup-form-new input,
+.owner-setup-form-new textarea {
+    flex: 1; 
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box; 
+    background-color: white; 
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Submit Button */
+.owner-submit-button-new {
+    width: 80%; 
+    margin: 20px auto 0; 
+    display: block;
+    padding: 12px;
+    background-color: #92a8d1; /* Ganti dari Pink Muda ke BIRU MUDA */
+    color: white; /* Teks Putih */
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.owner-submit-button-new:hover {
+    background-color: #7d96c4; /* Biru sedikit lebih gelap saat hover */
 }

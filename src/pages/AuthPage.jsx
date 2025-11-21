@@ -57,8 +57,8 @@ function AuthPage({ navigateTo }) {
           if (registerForm.role === 'walker') {
               navigateTo('walkerSetup'); // <-- NAVIGASI KE HALAMAN SETUP WALKER
           } else {
-              // Jika Pet Owner, arahkan ke halaman setup Pet Owner (akan kita buat nanti)
-              navigateTo('account'); 
+              // PENTING: Jika Pet Owner, arahkan ke halaman setup Pet Owner
+              navigateTo('ownerSetup'); // <-- NAVIGASI KE HALAMAN SETUP OWNER
           }
       }
   };

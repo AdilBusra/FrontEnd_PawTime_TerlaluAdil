@@ -7,6 +7,7 @@ import AuthPage from './pages/AuthPage';
 import PetWalkerPage from './pages/PetWalkerPage';
 import WalkerDetailPage from './pages/WalkerDetailPage';
 import WalkerSetupPage from './pages/WalkerSetupPage';
+import PetOwnerPage from './pages/PetOwnerPage';
 
 
 function Router() {
@@ -45,6 +46,9 @@ function Router() {
     if (currentPage === 'detail') {
       // Meneruskan ID Walker yang dipilih ke Halaman Detail
       return <WalkerDetailPage navigateTo={navigateTo} walkerId={selectedWalkerId} />;
+    }
+    if (currentPage === 'ownerSetup') { // <-- KONDISI BARU
+      return <PetOwnerPage navigateTo={navigateTo} />;
     }
     
     return <LandingPage navigateTo={navigateTo} />;
