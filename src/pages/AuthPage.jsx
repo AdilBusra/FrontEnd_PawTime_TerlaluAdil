@@ -1,6 +1,7 @@
 // src/pages/AuthPage.jsx
 import React, { useState } from "react";
 import Header from "../components/Header";
+import api from "../api";
 import { useNavigate } from 'react-router-dom';
 
 // MODIFIKASI: Menerima setLoggedInUserRole dari App.jsx
@@ -33,27 +34,75 @@ function AuthPage({ setLoggedInUserRole, userRole }) {
     }));
   };
 
-  // HANDLER SUBMIT
-  const handleFormSubmit = (e) => {
-      e.preventDefault(); 
-      
-      if (activeTab === 'login') {
-          console.log('Data Login Terkumpul:', loginForm);
-          alert(`Mencoba Login dengan Email: ${loginForm.email}. Siap dikirim ke Backend!`);
-          // Di sini nanti logika sukses login akan navigateTo('account')
-      } else {
-          // Logika untuk Registration
-          console.log('Data Register Terkumpul:', registerForm);
-          alert(`Registrasi berhasil! Anda akan diarahkan ke halaman setup.`);
+  // HANDLER SAAT FORM DI-SUBMIT (API Integration + React Router DOM)
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
 
-          // PENTING: Arahkan ke halaman setup profil walker setelah Register
-          if (registerForm.role === 'walker') {
-              navigate('/setup/walker'); // <-- NAVIGASI KE HALAMAN SETUP WALKER
-          } else {
-              // PENTING: Jika Pet Owner, arahkan ke halaman setup Pet Owner
-              navigate('/setup/owner');// <-- NAVIGASI KE HALAMAN SETUP OWNER
+    try {
+      if (activeTab === "login") {
+        // Login logic with API
+        const response = await api.post("/api/auth/login", {
+          email: loginForm.email,
+          password: loginForm.password,
+        });
+
+        // Save token to localStorage
+        if (response.data && response.data.token) {
+          localStorage.setItem("token", response.data.token);
+          
+          // Get user role from response
+          const userRole = response.data.user?.role || response.data.role;
+          
+          // Update user role di parent component jika ada
+          if (setLoggedInUserRole) {
+            setLoggedInUserRole(userRole);
           }
+          
+          // Redirect based on user role using React Router
+          if (userRole === "walker") {
+            navigate("/walkers");
+          } else {
+            navigate("/");
+          }
+        }
+      } else {
+        // Registration logic with API
+        const response = await api.post("/api/auth/register", {
+          name: registerForm.name,
+          phone: registerForm.number,
+          email: registerForm.email,
+          password: registerForm.password,
+          role: registerForm.role,
+        });
+
+        // Save token to localStorage if provided
+        if (response.data && response.data.token) {
+          localStorage.setItem("token", response.data.token);
+        }
+        
+        // Update user role di parent component jika ada
+        if (setLoggedInUserRole) {
+          setLoggedInUserRole(registerForm.role);
+        }
+
+        // Navigate to setup page based on role using React Router
+        if (registerForm.role === "walker") {
+          navigate("/setup/walker");
+        } else {
+          navigate("/setup/owner");
+        }
       }
+    } catch (error) {
+      console.error("Authentication error:", error);
+      
+      // Display error message to user
+      const errorMessage = error.response?.data?.message || "Authentication failed. Please try again.";
+      alert(errorMessage);
+    }
+  };
+
+  const switchTab = (tabName) => {
+    setActiveTab(tabName);
   };
 
   const buttonText = activeTab === "login" ? "Login" : "Registration";

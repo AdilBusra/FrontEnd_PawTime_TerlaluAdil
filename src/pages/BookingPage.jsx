@@ -1,6 +1,7 @@
 // src/pages/BookingPage.jsx (Halaman 6)
 import React, { useState } from 'react';
 import Header from '../components/Header';
+import api from '../api';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 // Menerima data dari halaman Walker Detail Page (jika ada)
@@ -9,9 +10,11 @@ function BookingPage({ }) {
     const navigate = useNavigate();
     const location = useLocation();
     
-    // Default Walker Name bisa diambil dari parameter data
+    // Get data from location.state (passed from WalkerDetailPage)
     const defaultWalkerName = location.state?.walkerName || "Pilih Walker Dulu";
-    
+    const walkerId = location.state?.walkerId || null;
+    const pricePerHour = location.state?.pricePerHour || 50000;
+
     const [bookingForm, setBookingForm] = useState({
         walker: defaultWalkerName, // Nama Walker
         owner: 'Maria', // Simulasi nama owner yang sudah login
@@ -30,13 +33,45 @@ function BookingPage({ }) {
         });
     };
 
-    const handleConfirmBooking = (e) => {
+    const handleConfirmBooking = async (e) => {
         e.preventDefault();
-        console.log('Booking Confirmed:', bookingForm);
-        alert(`Booking untuk ${bookingForm.walker} telah dibuat!`);
-        
-        // NAVIGASI KE HALAMAN WAITING CONFIRMATION (Halaman 7)
-        navigate('/status/waiting');
+
+        if (!walkerId) {
+            alert('Walker ID tidak ditemukan. Silakan pilih walker terlebih dahulu.');
+            return;
+        }
+
+        try {
+            // Gabungkan date dan time menjadi start_time (ISO format)
+            const startDateTime = new Date(`${bookingForm.date}T${bookingForm.time}`);
+            const startTime = startDateTime.toISOString();
+
+            // Hitung total_price
+            const totalPrice = pricePerHour * bookingForm.duration;
+
+            // Payload untuk backend
+            const payload = {
+                walker_id: walkerId,
+                start_time: startTime,
+                duration: parseInt(bookingForm.duration),
+                total_price: totalPrice,
+            };
+
+            console.log('Sending booking:', payload);
+
+            // POST request ke backend
+            const response = await api.post('/api/bookings', payload);
+
+            if (response.status === 201) {
+                console.log('Booking created:', response.data);
+                // Navigate to waiting page using React Router
+                navigate('/status/waiting');
+            }
+        } catch (error) {
+            console.error('Booking error:', error);
+            const errorMessage = error.response?.data?.message || 'Gagal membuat booking. Silakan coba lagi.';
+            alert(errorMessage);
+        }
     };
 
     return (

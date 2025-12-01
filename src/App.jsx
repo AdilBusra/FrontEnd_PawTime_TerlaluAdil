@@ -17,6 +17,7 @@ import WalkerSetupPage from './pages/WalkerSetupPage';
 import WalkerConfirmationPage from './pages/WalkerConfirmationPage';
 import AccountPage from './pages/AccountPage';
 import PetOwnerPage from './pages/PetOwnerPage';
+import TrackingPage from './pages/TrackingPage'; // Live Tracking dengan Maps
 
 function App() {
   return (
@@ -36,6 +37,9 @@ function App() {
         {/* Status Pages. StatusPage harus bisa menangani state isConfirmed di dalamnya */}
         <Route path="/status/waiting" element={<StatusPage />} />
         <Route path="/status/confirmed" element={<StatusPage isConfirmed={true} />} />
+        
+        {/* Live Tracking Page with Maps */}
+        <Route path="/tracking" element={<TrackingPage />} />
         
         {/* QR Pages. Component harus bisa menangani prop type */}
         <Route path="/qr/tracking" element={<QrPage type="tracking" />} />
