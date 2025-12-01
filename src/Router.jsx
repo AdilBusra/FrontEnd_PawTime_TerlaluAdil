@@ -35,7 +35,7 @@ function Router() {
                 return <PetWalkerPage navigateTo={navigateTo} />;
             case 'detail':
                 // Meneruskan ID Walker yang dipilih ke halaman detail
-                return <WalkerDetailPage navigateTo={navigateTo} walkerId={pageData.id} />; 
+                return <WalkerDetailPage navigateTo={navigateTo} walkerId={pageData} />;
             case 'booking':
                 // Meneruskan data walker ke halaman booking
                 return <BookingPage navigateTo={navigateTo} data={pageData} />; 
