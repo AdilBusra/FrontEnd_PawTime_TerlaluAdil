@@ -1,13 +1,12 @@
 // src/pages/WalkerDetailPage.jsx
 import React from 'react';
 import Header from '../components/Header';
-import { petWalkers } from '../data/mockData'; // Import data dari mockData
+import { petWalkers } from '../data/mockData'; 
 
 // Komponen Pembantu untuk menampilkan Rating Bintang
 const RatingStars = ({ rating }) => {
   const stars = [];
   for (let i = 0; i < 5; i++) {
-    // Menampilkan bintang emas jika indeks lebih kecil dari nilai rating
     const starClass = i < rating ? 'filled' : 'empty'; 
     stars.push(
       <span key={i} className={`star ${starClass}`}>
@@ -18,15 +17,12 @@ const RatingStars = ({ rating }) => {
   return <div className="rating-stars">{stars}</div>;
 };
 
-
 // Komponen Utama Detail Page, menerima walkerId
 function WalkerDetailPage({ navigateTo, walkerId, userRole}) { 
   
   // 1. CARI DATA WALKER BERDASARKAN ID
-  // Gunakan '==' karena walkerId dari state mungkin berupa string
   const walker = petWalkers.find(w => w.id == walkerId); 
 
-  // Penanganan Error/Data Tidak Ditemukan
   if (!walker) {
     return (
       <div className="walker-detail-page-container">
@@ -39,8 +35,13 @@ function WalkerDetailPage({ navigateTo, walkerId, userRole}) {
     );
   }
   
-  // Destructuring data yang ditemukan
   const { name, location, image, description, fee, rating } = walker;
+
+  // HANDLER UNTUK TOMBOL BOOK NOW (Mengarah ke Halaman 6: Booking)
+  const handleBookNow = () => {
+      // Kita kirim ID walker dan namanya ke halaman booking
+      navigateTo('booking', { walkerId: walker.id, walkerName: walker.name });
+  };
 
   return (
     <div className="walker-detail-page-container">
@@ -48,7 +49,6 @@ function WalkerDetailPage({ navigateTo, walkerId, userRole}) {
 
       <div className="walker-detail-box">
         
-        {/* Konten Utama Detail Profil */}
         <div className="detail-content">
           
           {/* KIRI: Foto & Info Dasar */}
@@ -81,7 +81,12 @@ function WalkerDetailPage({ navigateTo, walkerId, userRole}) {
               </span>
             </div>
             
-            <button className="book-now-button">BOOK NOW</button>
+            <button 
+              className="book-now-button"
+              onClick={handleBookNow} // <-- NAVIGASI KE BOOKING
+            >
+              BOOK NOW
+            </button>
           </div>
         </div>
       </div>

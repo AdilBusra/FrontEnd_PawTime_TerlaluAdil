@@ -35,32 +35,25 @@ function AuthPage({ navigateTo, setLoggedInUserRole, userRole }) {
   const handleFormSubmit = (e) => {
       e.preventDefault(); 
       
-      if (activeTab === 'register') {
-          const role = registerForm.role; 
-          
-          if (setLoggedInUserRole) { 
-              setLoggedInUserRole(role); 
-          }
-          
-         
+      if (activeTab === 'login') {
+          console.log('Data Login Terkumpul:', loginForm);
+          alert(`Mencoba Login dengan Email: ${loginForm.email}. Siap dikirim ke Backend!`);
+          // Di sini nanti logika sukses login akan navigateTo('account')
+      } else {
+          // Logika untuk Registration
+          console.log('Data Register Terkumpul:', registerForm);
+          alert(`Registrasi berhasil! Anda akan diarahkan ke halaman setup.`);
 
-          if (role === 'walker') {
-              navigateTo('walkerSetup'); 
-          } else { 
-              navigateTo('ownerSetup'); 
+          // PENTING: Arahkan ke halaman setup profil walker setelah Register
+          if (registerForm.role === 'walker') {
+              navigateTo('walkerSetup'); // <-- NAVIGASI KE HALAMAN SETUP WALKER
+          } else {
+              // PENTING: Jika Pet Owner, arahkan ke halaman setup Pet Owner
+              navigateTo('ownerSetup'); // <-- NAVIGASI KE HALAMAN SETUP OWNER
           }
-          
-      } else { // Login
-          if (setLoggedInUserRole) { 
-              setLoggedInUserRole('owner'); 
-          }
-      
-          navigateTo('account'); 
       }
   };
 
-  // VARIABEL DAN FUNGSI PEMBANTU
-  const switchTab = (tabName) => { setActiveTab(tabName); };
   const buttonText = activeTab === "login" ? "Login" : "Registration";
   const buttonClass = activeTab === "login" ? "login-button" : "registration-button";
   
@@ -76,6 +69,9 @@ function AuthPage({ navigateTo, setLoggedInUserRole, userRole }) {
     return (
       <div className="welcome-text-content">
         <h2 className="welcome-heading">First Timer? 😍</h2>
+        <p className="welcome-subtext">
+          Ready to book a Walker or become one?
+        </p>
       </div>
     );
   };
@@ -105,7 +101,12 @@ function AuthPage({ navigateTo, setLoggedInUserRole, userRole }) {
         </div>
         <div className="input-group-auth">
           <label htmlFor="number">No Number</label>
-          <input type="tel" id="number" value={registerForm.number} onChange={handleRegisterChange} />
+          <input
+            type="tel"
+            id="number"
+            value={registerForm.number}
+            onChange={handleRegisterChange}
+          />
         </div>
         <div className="input-group-auth">
           <label htmlFor="email">Email</label>
