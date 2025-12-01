@@ -20,7 +20,7 @@ const RatingStars = ({ rating }) => {
 
 
 // Komponen Utama Detail Page, menerima walkerId
-function WalkerDetailPage({ navigateTo, walkerId }) { 
+function WalkerDetailPage({ navigateTo, walkerId, userRole}) { 
   
   // 1. CARI DATA WALKER BERDASARKAN ID
   // Gunakan '==' karena walkerId dari state mungkin berupa string
@@ -44,7 +44,7 @@ function WalkerDetailPage({ navigateTo, walkerId }) {
 
   return (
     <div className="walker-detail-page-container">
-      <Header navigateTo={navigateTo} />
+   <Header navigateTo={navigateTo} userRole={userRole} />
 
       <div className="walker-detail-box">
         

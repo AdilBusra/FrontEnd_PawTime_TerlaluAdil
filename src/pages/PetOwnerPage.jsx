@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Header from "../components/Header";
 
-function PetOwnerPage({ navigateTo }) {
+function PetOwnerPage({ navigateTo, userRole }) {
   const [ownerForm, setOwnerForm] = useState({
     ownerName: "",
     phoneNumber: "",
@@ -23,13 +23,12 @@ function PetOwnerPage({ navigateTo }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Data Pet Owner Siap:", ownerForm);
-    alert(`Data Pet Owner untuk ${ownerForm.petName} berhasil disimpan!`);
     navigateTo("account");
   };
 
   return (
     <div className="pet-owner-page-container">
-      <Header navigateTo={navigateTo} />
+    <Header navigateTo={navigateTo} userRole={userRole} />
 
       <div className="owner-setup-content-main">
         {" "}

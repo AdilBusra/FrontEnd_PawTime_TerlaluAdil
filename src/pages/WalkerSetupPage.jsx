@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
 
-function WalkerSetupPage({ navigateTo }) {
+function WalkerSetupPage({ navigateTo, userRole }) {
   const [profileForm, setProfileForm] = useState({
     photo: null, // Untuk file foto
     location: '',
@@ -30,15 +30,13 @@ function WalkerSetupPage({ navigateTo }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Data Profil Walker Siap (Termasuk File):", profileForm);
-    alert("Data Profil Berhasil Disimpan! Anda sekarang bisa menerima Booking.");
-    // Setelah sukses, arahkan ke halaman Dashboard Akun
+    console.log("Data Profil Walker Siap (Termasuk File):", profileForm);    // Setelah sukses, arahkan ke halaman Dashboard Akun
     navigateTo('account'); 
   };
 
   return (
     <div className="walker-setup-page-container">
-      <Header navigateTo={navigateTo} />
+<Header navigateTo={navigateTo} userRole={userRole} />
       
       <div className="setup-content-main">
         

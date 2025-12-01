@@ -1,21 +1,19 @@
 // src/pages/LandingPage.jsx
-import React from 'react';
-import Header from '../components/Header'; // Kita selalu impor Header
-import gambar1 from '../assets/1.png'; // Ganti dengan nama file gambar Anda
+import React from "react";
+import Header from "../components/Header";
+import gambar1 from "../assets/1.png"; // Ganti dengan nama file gambar Anda
 
-function LandingPage({ navigateTo }) { 
-  
+function LandingPage({ navigateTo, userRole }) {
   const handleGetStartedClick = () => {
     // Tombol ini akan mengarahkan ke halaman Auth (Login/Register)
-    navigateTo('auth'); 
+    navigateTo("auth");
   };
 
   return (
-    <div className="landing-page-full"> 
-      <Header navigateTo={navigateTo} />
-      
+    <div className="landing-page-full">
+      <Header navigateTo={navigateTo} userRole={userRole} />
+
       <div className="landing-page-hero">
-        
         {/* KIRI: Teks Utama */}
         <div className="hero-text-content-new">
           <h1 className="greeting-text">Hi, Paw Lovers 👋</h1>
@@ -41,7 +39,6 @@ function LandingPage({ navigateTo }) {
             Get Started
           </button>
         </div>
-        
       </div>
     </div>
   );
