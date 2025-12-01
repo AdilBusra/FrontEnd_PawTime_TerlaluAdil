@@ -5,7 +5,7 @@ import Header from '../components/Header';
 import qrPlaceholder from '../assets/download(11).jpeg'; // Pastikan file ini ada!
 
 // Menerima prop 'type' untuk menentukan halaman mana yang ditampilkan (tracking atau payment)
-function QrPage({ navigateTo, type = 'tracking' }) { 
+function QrPage({ type = 'tracking' }) { 
     
     // State hanya untuk simulasi sukses pembayaran
     const [isPaid, setIsPaid] = useState(false);
@@ -27,7 +27,7 @@ function QrPage({ navigateTo, type = 'tracking' }) {
 
     return (
         <div className="qr-page-container">
-            <Header navigateTo={navigateTo} />
+            <Header/>
             
             <div className="qr-page-main">
                 <h2 className="qr-code-title">{title}</h2>

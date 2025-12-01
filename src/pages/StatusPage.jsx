@@ -1,9 +1,13 @@
 // src/pages/StatusPage.jsx (Halaman 7 & 8)
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
+import { useNavigate } from 'react-router-dom';
 
 // Kita gunakan 'isConfirmed' sebagai state untuk beralih antara Halaman 7 dan 8
-function StatusPage({ navigateTo }) { 
+function StatusPage() { // HILANGKAN navigateTo
+    
+    const navigate = useNavigate(); // <-- PANGGIL HOOK
+    
     // State ini akan disimulasikan sebagai respons dari backend Walker
     const [isConfirmed, setIsConfirmed] = useState(false); 
     const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +35,7 @@ function StatusPage({ navigateTo }) {
     if (!isConfirmed) {
         return (
             <div className="waiting-page-container">
-                <Header navigateTo={navigateTo} />
+                <Header/>
                 <div className="status-page-main">
                     <span className="waiting-icon">⏰</span> {/* Ikon Jam (Halaman 7) */}
                     <h2 className="status-message">Waiting The Pet Walker to confirmed your booking...</h2>
@@ -51,7 +55,7 @@ function StatusPage({ navigateTo }) {
     // Confirmed Booking (Halaman 8)
     return (
         <div className="confirmed-page-container">
-            <Header navigateTo={navigateTo} />
+            <Header/>
             <div className="status-page-main">
                 <h2 className="status-message" style={{ color: '#A3D8A5' }}>Your Booking is Confirmed!!! 🎉</h2>
                 <p className="status-subtext">The Walker will reach out soon to confirm the details. Keep an eye on your inbox and phone</p>
@@ -61,19 +65,19 @@ function StatusPage({ navigateTo }) {
                 <div className="confirmed-actions">
                     <button 
                         className="action-button primary" 
-                        onClick={() => navigateTo('tracking')} // Halaman 9
+                        onClick={() => navigate('/qr/tracking')} // Halaman 9
                     >
                         Tracking
                     </button>
                     <button 
                         className="action-button secondary" 
-                        onClick={() => navigateTo('payment')} // Halaman 10
+                        onClick={() => navigate('/qr/payment')} // Halaman 10
                     >
                         Payment
                     </button>
                     <button 
                         className="action-button secondary" 
-                        onClick={() => navigateTo('rating')} // Halaman 11
+                        onClick={() => navigate('/rating')} // Halaman 11
                     >
                         Rating
                     </button>

@@ -1,13 +1,17 @@
 // src/pages/BookingPage.jsx (Halaman 6)
 import React, { useState } from 'react';
 import Header from '../components/Header';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // Menerima data dari halaman Walker Detail Page (jika ada)
-function BookingPage({ navigateTo, data = {} }) { 
+function BookingPage({ }) { 
+
+    const navigate = useNavigate();
+    const location = useLocation();
     
     // Default Walker Name bisa diambil dari parameter data
-    const defaultWalkerName = data.walkerName || "Pilih Walker Dulu";
-
+    const defaultWalkerName = location.state?.walkerName || "Pilih Walker Dulu";
+    
     const [bookingForm, setBookingForm] = useState({
         walker: defaultWalkerName, // Nama Walker
         owner: 'Maria', // Simulasi nama owner yang sudah login
@@ -32,12 +36,12 @@ function BookingPage({ navigateTo, data = {} }) {
         alert(`Booking untuk ${bookingForm.walker} telah dibuat!`);
         
         // NAVIGASI KE HALAMAN WAITING CONFIRMATION (Halaman 7)
-        navigateTo('waiting'); 
+        navigate('/status/waiting');
     };
 
     return (
         <>
-            <Header navigateTo={navigateTo} />
+            <Header/>
             <div className="booking-content-wrap">
 
             <div className="booking-wrap">

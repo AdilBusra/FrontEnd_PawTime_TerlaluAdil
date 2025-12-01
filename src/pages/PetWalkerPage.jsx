@@ -3,13 +3,14 @@ import React from "react";
 import Header from "../components/Header";
 import PetWalkerCard from "../components/PetWalkerCard";
 import { petWalkers } from "../data/mockData"; // <-- IMPORT DARI FOLDER DATA
+import { useNavigate } from 'react-router-dom';
 
 function PetWalkerPage({ navigateTo, userRole }) {
   // Terima prop navigateTo
 
   return (
     <div className="pet-walker-page-container">
-      <Header navigateTo={navigateTo} userRole={userRole} />
+      <Header userRole={userRole} />
 
       <div className="walker-list-main">
         <h2 className="walker-title">Choose your favorite Pet Walker ❤️</h2>
@@ -23,7 +24,6 @@ function PetWalkerPage({ navigateTo, userRole }) {
               name={walker.name}
               location={walker.location}
               image={walker.image}
-              navigateTo={navigateTo} // <-- Teruskan fungsi navigasi
             />
           ))}
         </div>
