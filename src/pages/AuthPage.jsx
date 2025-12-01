@@ -46,12 +46,9 @@ function AuthPage({ navigateTo }) {
       
       if (activeTab === 'login') {
           console.log('Data Login Terkumpul:', loginForm);
-          alert(`Mencoba Login dengan Email: ${loginForm.email}. Siap dikirim ke Backend!`);
-          // Di sini nanti logika sukses login akan navigateTo('account')
       } else {
           // Logika untuk Registration
           console.log('Data Register Terkumpul:', registerForm);
-          alert(`Registrasi berhasil! Anda akan diarahkan ke halaman setup.`);
 
           // PENTING: Arahkan ke halaman setup profil walker setelah Register
           if (registerForm.role === 'walker') {
@@ -89,6 +86,9 @@ function AuthPage({ navigateTo }) {
     return (
       <div className="welcome-text-content">
         <h2 className="welcome-heading">First Timer? 😍</h2>
+        <p className="welcome-subtext">
+          Ready to book a Walker or become one?
+        </p>
       </div>
     );
   };
@@ -136,7 +136,7 @@ function AuthPage({ navigateTo }) {
           />
         </div>
         <div className="input-group-auth">
-          <label htmlFor="number">No Number</label>
+          <label htmlFor="number">Phone No.</label>
           <input
             type="tel"
             id="number"
