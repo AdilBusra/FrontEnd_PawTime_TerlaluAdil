@@ -12,6 +12,7 @@ import WalkerSetupPage from './pages/WalkerSetupPage'; // Hlm 12
 import WalkerConfirmationPage from './pages/WalkerConfirmationPage'; // Hlm 13
 import AccountPage from './pages/AccountPage'; // Hlm 14
 import PetOwnerPage from './pages/PetOwnerPage'; // Pet Owner Setup (Bridging)
+import TrackingPage from './pages/TrackingPage'; // Live Tracking dengan Maps
 
 function Router() {
     // State untuk melacak halaman yang sedang aktif dan data tambahan (misal ID Walker)
@@ -45,8 +46,8 @@ function Router() {
                 // Jika ingin langsung menampilkan Confirmed (Halaman 8)
                 return <StatusPage navigateTo={navigateTo} isConfirmed={true} />; 
             case 'tracking':
-                // Menampilkan QR Page untuk Tracking (Halaman 9)
-                return <QrPage navigateTo={navigateTo} type="tracking" />;
+                // Menampilkan Live Tracking Page dengan Maps
+                return <TrackingPage navigateTo={navigateTo} />;
             case 'payment':
                 // Menampilkan QR Page untuk Payment (Halaman 10)
                 return <QrPage navigateTo={navigateTo} type="payment" />;
