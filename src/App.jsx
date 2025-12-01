@@ -14,21 +14,28 @@ import AccountPage from "./pages/AccountPage";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("landing");
-  // STATE BARU: Menyimpan role pengguna yang sudah login
   const [userRole, setUserRole] = useState(null); 
   
-  // FUNGSI BARU: Mengatur role pengguna
+  // *** 1. STATE BARU UNTUK ID WALKER ***
+  const [selectedWalkerId, setSelectedWalkerId] = useState(null); 
+  // *************************************
+  
   const setLoggedInUserRole = (role) => {
       setUserRole(role);
   };
 
 
-  const navigateTo = (page) => {
+  // *** 2. FUNGSI navigateTo DIMODIFIKASI ***
+  const navigateTo = (page, id = null) => {
     setCurrentPage(page);
+    // Simpan ID jika ID dikirimkan
+    if (id !== null) {
+        setSelectedWalkerId(id);
+    }
   };
+  // *****************************************
 
   const renderPage = () => {
-    // PENTING: Meneruskan userRole ke setiap Halaman
     
     if (currentPage === "auth") {
       return <AuthPage navigateTo={navigateTo} setLoggedInUserRole={setLoggedInUserRole} userRole={userRole} />;
@@ -48,10 +55,18 @@ function App() {
     if (currentPage === "walker") {
       return <PetWalkerPage navigateTo={navigateTo} userRole={userRole} />;
     }
-    if (currentPage === "detail") {
-      // Kita harus meneruskan walkerId di sini jika ada (meskipun sekarang disederhanakan)
-      return <WalkerDetailPage navigateTo={navigateTo} userRole={userRole} />; 
+    
+    // *** 3. WALKER DETAIL PAGE DENGAN walkerId ***
+    if (currentPage === "detail") { 
+      return (
+        <WalkerDetailPage 
+          navigateTo={navigateTo} 
+          userRole={userRole} 
+          walkerId={selectedWalkerId} // Meneruskan ID ke komponen detail
+        />
+      ); 
     }
+    // **********************************************
     
     // Default
     return <LandingPage navigateTo={navigateTo} userRole={userRole} />;
