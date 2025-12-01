@@ -256,9 +256,9 @@ html, body {
 }
 .walker-title {
     text-align: center;
-    font-size: 36px;
+    font-size: 45px;
     font-weight: 700;
-    color: #4A69BB;
+    color: #4A70A9;
     margin-bottom: 50px;
 }
 .walker-grid {
@@ -267,42 +267,44 @@ html, body {
     gap: 30px;
 }
 .pet-walker-card {
-    background-color: #6C8ECB; /* Biru Sedang */
+    background-color: #4A70A9; /* Biru Sedang */
     color: white;
-    border-radius: 12px;
+    border-radius: 30px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     text-align: center;
     padding: 20px;
 }
 .walker-image {
     width: 100%;
-    max-height: 200px;
+    max-height: 300px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 30px;
     margin-bottom: 15px;
 }
 .walker-name {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 600;
-    margin: 10px 0 5px;
+    margin: 0 0 10px;
 }
 .walker-location {
-    font-size: 14px;
+    font-size: 20px;
     font-weight: 400;
-    margin-bottom: 20px;
+    margin: 0px 0px 10px;
 }
 .view-more-button {
-    background-color: white;
-    color: #6C8ECB;
+    background-color: #B5C5DA;
+    color: white;
     border: none;
     padding: 8px 25px;
     border-radius: 20px;
     cursor: pointer;
     font-weight: 600;
+    font-size: 16px;
     transition: background-color 0.2s;
 }
 .view-more-button:hover {
     background-color: #EFECE3;
+    color: #4A70A9;
 }
 
 /* --- WALKER DETAIL PAGE STYLES (HLM 5) --- */
@@ -586,30 +588,30 @@ html, body {
 }
 
 /* --- BOOKING PAGE STYLES (HLM 6) --- */
-.booking-page-container {
+.booking-content-wrap {
     padding: 60px 80px;
     max-width: 1200px;
     margin: 0 auto;
     text-align: center;
 }
 .booking-title {
-    font-size: 32px;
+    font-size:48px;
     font-weight: 700;
-    color: #4A69BB;
+    color: #4A70A9;
     margin-bottom: 10px;
 }
 .booking-subtitle {
     font-size: 24px;
     font-weight: 500;
-    color: #6C8ECB;
+    color: #4A70A9;
     margin-bottom: 40px;
 }
 .booking-form-box {
     width: 450px;
-    background-color: #6C8ECB; /* Biru Sedang Background */
+    background-color: #4A70A9; /* Biru Sedang Background */
     margin: 0 auto;
     padding: 40px;
-    border-radius: 15px;
+    border-radius: 30px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     color: white;
 }
@@ -629,28 +631,43 @@ html, body {
     flex: 1;
     padding: 12px;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: 25px;
+    margin: 1px;
+    font-size: 18px;
     box-sizing: border-box;
 }
 .confirm-booking-button {
-    width: 80%;
+    width: 55%;
     margin: 30px auto 0;
     display: block;
     padding: 15px;
-    background-color: #4A69BB; /* Biru Tua */
+    background-color: #B5C5DA; /* Biru Tua */
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 30px;
     font-size: 20px;
     font-weight: 700;
     cursor: pointer;
     transition: background-color 0.2s;
 }
 .confirm-booking-button:hover {
-    background-color: #3f5898;
+    background-color: #EFECE3 ;
+    color: #4A70A9;
 }
-
+.booking-wrap{
+    padding: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.booking-wrap-title{
+    flex: 1; 
+    max-width: 600px; 
+    text-align: left;
+}
 /* --- STATUS PAGES (HLM 7 & 8) --- */
 .status-page-main {
     text-align: center;

@@ -11,7 +11,7 @@ function BookingPage({ navigateTo, data = {} }) {
     const [bookingForm, setBookingForm] = useState({
         walker: defaultWalkerName, // Nama Walker
         owner: 'Maria', // Simulasi nama owner yang sudah login
-        phone: '0852xxxxxx', // Simulasi data owner yang sudah login
+        phone: '0852xxxxxx', // Simulasi data owner yang sudah login    
         address: '', 
         date: '',
         time: '',
@@ -36,11 +36,16 @@ function BookingPage({ navigateTo, data = {} }) {
     };
 
     return (
-        <div className="booking-page-container">
+        <>
             <Header navigateTo={navigateTo} />
+            <div className="booking-content-wrap">
 
-            <h2 className="booking-title">Great Choice!!!</h2>
-            <p className="booking-subtitle">Now let's fill in some important information of yours</p>
+            <div className="booking-wrap">
+            
+            <div className="booking-wrap-title">
+                <h2 className="booking-title">Great Choice!!!</h2>
+                <p className="booking-subtitle">Now let's fill in some important information of yours</p>
+            </div>
 
             <div className="booking-form-box">
                 <form onSubmit={handleConfirmBooking}>
@@ -115,8 +120,11 @@ function BookingPage({ navigateTo, data = {} }) {
                         Confirm Booking
                     </button>
                 </form>
+            
             </div>
         </div>
+    </div>
+    </>
     );
 }
 
