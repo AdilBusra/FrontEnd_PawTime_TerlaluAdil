@@ -1,12 +1,14 @@
 // src/pages/BookingPage.jsx (Halaman 6)
 import React, { useState } from 'react';
 import Header from '../components/Header';
+import api from '../api';
 
 // Menerima data dari halaman Walker Detail Page (jika ada)
 function BookingPage({ navigateTo, data = {} }) { 
     
     // Default Walker Name bisa diambil dari parameter data
     const defaultWalkerName = data.walkerName || "Pilih Walker Dulu";
+    const walkerId = data.walkerId || null; // Ambil walker_id dari data
 
     const [bookingForm, setBookingForm] = useState({
         walker: defaultWalkerName, // Nama Walker
@@ -26,13 +28,46 @@ function BookingPage({ navigateTo, data = {} }) {
         });
     };
 
-    const handleConfirmBooking = (e) => {
+    const handleConfirmBooking = async (e) => {
         e.preventDefault();
-        console.log('Booking Confirmed:', bookingForm);
-        alert(`Booking untuk ${bookingForm.walker} telah dibuat!`);
-        
-        // NAVIGASI KE HALAMAN WAITING CONFIRMATION (Halaman 7)
-        navigateTo('waiting'); 
+
+        if (!walkerId) {
+            alert('Walker ID tidak ditemukan. Silakan pilih walker terlebih dahulu.');
+            return;
+        }
+
+        try {
+            // Gabungkan date dan time menjadi start_time (ISO format)
+            const startDateTime = new Date(`${bookingForm.date}T${bookingForm.time}`);
+            const startTime = startDateTime.toISOString();
+
+            // Hitung total_price (asumsi: harga per jam dari data walker atau default)
+            const pricePerHour = data.pricePerHour || 50000; // Default Rp 50,000 per jam
+            const totalPrice = pricePerHour * bookingForm.duration;
+
+            // Payload untuk backend
+            const payload = {
+                walker_id: walkerId,
+                start_time: startTime,
+                duration: parseInt(bookingForm.duration),
+                total_price: totalPrice,
+            };
+
+            console.log('Sending booking:', payload);
+
+            // POST request ke backend
+            const response = await api.post('/api/bookings', payload);
+
+            if (response.status === 201) {
+                console.log('Booking created:', response.data);
+                // NAVIGASI KE HALAMAN WAITING CONFIRMATION (Halaman 7)
+                navigateTo('waiting');
+            }
+        } catch (error) {
+            console.error('Booking error:', error);
+            const errorMessage = error.response?.data?.message || 'Gagal membuat booking. Silakan coba lagi.';
+            alert(errorMessage);
+        }
     };
 
     return (

@@ -1,6 +1,7 @@
 // src/pages/AuthPage.jsx
 import React, { useState } from "react";
 import Header from "../components/Header";
+import api from "../api";
 
 function AuthPage({ navigateTo }) {
   const [activeTab, setActiveTab] = useState("login");
@@ -41,23 +42,58 @@ function AuthPage({ navigateTo }) {
   };
 
   // 5. HANDLER SAAT FORM DI-SUBMIT
-  const handleFormSubmit = (e) => {
-      e.preventDefault(); 
-      
-      if (activeTab === 'login') {
-          console.log('Data Login Terkumpul:', loginForm);
-      } else {
-          // Logika untuk Registration
-          console.log('Data Register Terkumpul:', registerForm);
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
 
-          // PENTING: Arahkan ke halaman setup profil walker setelah Register
-          if (registerForm.role === 'walker') {
-              navigateTo('walkerSetup'); // <-- NAVIGASI KE HALAMAN SETUP WALKER
+    try {
+      if (activeTab === "login") {
+        // Login logic
+        const response = await api.post("/api/auth/login", {
+          email: loginForm.email,
+          password: loginForm.password,
+        });
+
+        // Save token to localStorage
+        if (response.data && response.data.token) {
+          localStorage.setItem("token", response.data.token);
+          
+          // Redirect based on user role
+          const userRole = response.data.user?.role || response.data.role;
+          if (userRole === "walker") {
+            navigateTo("walker");
           } else {
-              // PENTING: Jika Pet Owner, arahkan ke halaman setup Pet Owner
-              navigateTo('ownerSetup'); // <-- NAVIGASI KE HALAMAN SETUP OWNER
+            navigateTo("landing");
           }
+        }
+      } else {
+        // Registration logic
+        const response = await api.post("/api/auth/register", {
+          name: registerForm.name,
+          phone: registerForm.number,
+          email: registerForm.email,
+          password: registerForm.password,
+          role: registerForm.role,
+        });
+
+        // Save token to localStorage if provided
+        if (response.data && response.data.token) {
+          localStorage.setItem("token", response.data.token);
+        }
+
+        // Navigate to setup page based on role
+        if (registerForm.role === "walker") {
+          navigateTo("walkerSetup");
+        } else {
+          navigateTo("ownerSetup");
+        }
       }
+    } catch (error) {
+      console.error("Authentication error:", error);
+      
+      // Display error message to user
+      const errorMessage = error.response?.data?.message || "Authentication failed. Please try again.";
+      alert(errorMessage);
+    }
   };
 
   const buttonText = activeTab === "login" ? "Login" : "Registration";
