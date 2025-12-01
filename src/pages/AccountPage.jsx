@@ -2,8 +2,10 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
 import christellaProfile from '../assets/download(9).jpeg'; // Contoh foto profil
+import { useNavigate } from 'react-router-dom';
 
-function AccountPage({ navigateTo }) {
+function AccountPage() {
+    const navigate = useNavigate();
     const [profile, setProfile] = useState({
         name: 'Christella',
         phone: '085208997612',
@@ -65,7 +67,7 @@ function AccountPage({ navigateTo }) {
 
     return (
         <div className="account-page-container">
-            <Header navigateTo={navigateTo} />
+            <Header />
             
             <div className="account-page-main">
                 <h2 className="profile-heading">Your Amazing Profile ❤️</h2>
@@ -96,7 +98,7 @@ function AccountPage({ navigateTo }) {
                                     fontWeight: '700',
                                     marginTop: '20px'
                                 }}
-                                onClick={() => navigateTo('walkerConfirm')}
+                                onClick={() => navigate('/setup/confirm')}
                              >
                                 Cek Konfirmasi Booking
                             </button>

@@ -2,8 +2,10 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
 import chris from '../assets/download(9).jpeg'; // Ambil gambar Christella dari mockData
+import { useNavigate } from 'react-router-dom';
 
-function RatingPage({ navigateTo }) {
+function RatingPage() {
+    const navigate = useNavigate();
     const [rating, setRating] = useState(0); // State untuk bintang
     const [review, setReview] = useState('');
     const walkerName = "Christella"; // Contoh: Ambil dari state global
@@ -43,7 +45,7 @@ function RatingPage({ navigateTo }) {
 
     return (
         <div className="rating-page-container">
-            <Header navigateTo={navigateTo} />
+            <Header/>
             
             <form onSubmit={handleSubmitRating} className="rating-page-main">
                 <h2 style={{ color: '#EFECE3', marginBottom: '30px' }}>Bagaimana layanan Pet Walker? ⭐️</h2>

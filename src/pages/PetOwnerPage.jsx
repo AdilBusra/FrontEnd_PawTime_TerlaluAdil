@@ -1,8 +1,10 @@
 // src/pages/PetOwnerPage.jsx
 import React, { useState } from "react";
 import Header from "../components/Header";
+import { useNavigate } from 'react-router-dom';
 
-function PetOwnerPage({ navigateTo, userRole }) {
+function PetOwnerPage({ userRole }) {
+  const navigateTo = useNavigate();
   const [ownerForm, setOwnerForm] = useState({
     ownerName: "",
     phoneNumber: "",
@@ -23,12 +25,12 @@ function PetOwnerPage({ navigateTo, userRole }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Data Pet Owner Siap:", ownerForm);
-    navigateTo("account");
+    navigateTo ('/account');
   };
 
   return (
     <div className="pet-owner-page-container">
-    <Header navigateTo={navigateTo} userRole={userRole} />
+    <Header userRole={userRole} />
 
       <div className="owner-setup-content-main">
         {" "}

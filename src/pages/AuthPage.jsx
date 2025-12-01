@@ -1,10 +1,12 @@
 // src/pages/AuthPage.jsx
 import React, { useState } from "react";
 import Header from "../components/Header";
+import { useNavigate } from 'react-router-dom';
 
 // MODIFIKASI: Menerima setLoggedInUserRole dari App.jsx
-function AuthPage({ navigateTo, setLoggedInUserRole, userRole }) { 
+function AuthPage({ setLoggedInUserRole, userRole }) { 
   const [activeTab, setActiveTab] = useState("login");
+  const navigate = useNavigate();
 
   // STATE DAN HANDLER FORM
   const [loginForm, setLoginForm] = useState({
@@ -46,10 +48,10 @@ function AuthPage({ navigateTo, setLoggedInUserRole, userRole }) {
 
           // PENTING: Arahkan ke halaman setup profil walker setelah Register
           if (registerForm.role === 'walker') {
-              navigateTo('walkerSetup'); // <-- NAVIGASI KE HALAMAN SETUP WALKER
+              navigate('/setup/walker'); // <-- NAVIGASI KE HALAMAN SETUP WALKER
           } else {
               // PENTING: Jika Pet Owner, arahkan ke halaman setup Pet Owner
-              navigateTo('ownerSetup'); // <-- NAVIGASI KE HALAMAN SETUP OWNER
+              navigate('/setup/owner');// <-- NAVIGASI KE HALAMAN SETUP OWNER
           }
       }
   };
@@ -133,7 +135,7 @@ function AuthPage({ navigateTo, setLoggedInUserRole, userRole }) {
 
   return (
     <div className="auth-page-container">
-   <Header navigateTo={navigateTo} userRole={userRole} />
+   <Header userRole={userRole} />
       
       <div className="auth-content-main">
         
