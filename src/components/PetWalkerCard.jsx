@@ -1,13 +1,16 @@
-// src/components/PetWalkerCard.jsx
+// src/components/PetWalkerCard.jsx (SETELAH PERUBAHAN)
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; // <-- BARU
 
-// Menerima props: name, location, image, dan navigateTo
-function PetWalkerCard({ id, name, location, image, navigateTo }) {
+// Tidak lagi menerima prop navigateTo
+function PetWalkerCard({ id, name, location, image }) {
+    
+    const navigate = useNavigate(); // <-- Panggil Hook
     
     // Fungsi untuk mengarahkan ke halaman detail (meneruskan ID walker)
     const handleViewMore = () => {
-        // Penting: kita kirim ID ke fungsi navigateTo agar halaman detail tahu data mana yang harus ditampilkan
-        navigateTo('detail', id); 
+        // Navigasi menggunakan path URL yang sudah didefinisikan di App.jsx
+        navigate(`/walker/${id}`); 
     }
 
     return (
@@ -18,7 +21,7 @@ function PetWalkerCard({ id, name, location, image, navigateTo }) {
                 <p className="walker-location">📍 {location}</p>
                 <button 
                     className="view-more-button"
-                    onClick={handleViewMore} // <-- Panggil fungsi navigasi
+                    onClick={handleViewMore}
                 >
                     view more
                 </button>

@@ -21,7 +21,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 // Ganti URL ini dengan URL Ngrok Backend Anda!
 const SOCKET_URL = "https://predoubtful-nonincorporated-tonia.ngrok-free.dev"; 
 
-function TrackingPage({ navigateTo, userRole }) {
+function TrackingPage({ userRole }) {
     const [position, setPosition] = useState(null); // Koordinat Walker
     const [status, setStatus] = useState("Menunggu Sinyal Walker...");
 

@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import PetWalkerCard from '../components/PetWalkerCard';
 import api from '../api';
 
-function PetWalkerPage({ navigateTo, userRole }) {
+function PetWalkerPage({ userRole }) {
   const [walkers, setWalkers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,7 +46,7 @@ function PetWalkerPage({ navigateTo, userRole }) {
 
   return (
     <div className="pet-walker-page-container">
-      <Header navigateTo={navigateTo} userRole={userRole} />
+      <Header userRole={userRole} />
 
       <div className="walker-list-main">
         <h2 className="walker-title">Choose your favorite Pet Walker ❤️</h2>
@@ -64,7 +64,6 @@ function PetWalkerPage({ navigateTo, userRole }) {
                 name={walker.name || walker.user?.name}
                 location={walker.location || walker.address}
                 image={walker.image || walker.profile_picture}
-                navigateTo={navigateTo}
               />
             ))
           ) : (

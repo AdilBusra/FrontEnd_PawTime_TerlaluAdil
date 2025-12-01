@@ -1,8 +1,10 @@
 // src/pages/WalkerSetupPage.jsx
 import React, { useState } from 'react';
 import Header from '../components/Header';
+import { useNavigate } from 'react-router-dom';
 
-function WalkerSetupPage({ navigateTo, userRole }) {
+function WalkerSetupPage({ userRole }) {
+  const navigate = useNavigate();
   const [profileForm, setProfileForm] = useState({
     photo: null, // Untuk file foto
     location: '',
@@ -31,12 +33,12 @@ function WalkerSetupPage({ navigateTo, userRole }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Data Profil Walker Siap (Termasuk File):", profileForm);    // Setelah sukses, arahkan ke halaman Dashboard Akun
-    navigateTo('account'); 
+    navigate('/account');
   };
 
   return (
     <div className="walker-setup-page-container">
-<Header navigateTo={navigateTo} userRole={userRole} />
+<Header userRole={userRole} />
       
       <div className="setup-content-main">
         

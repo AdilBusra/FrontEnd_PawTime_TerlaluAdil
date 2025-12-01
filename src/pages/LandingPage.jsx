@@ -2,16 +2,18 @@
 import React from "react";
 import Header from "../components/Header";
 import gambar1 from "../assets/1.png"; // Ganti dengan nama file gambar Anda
+import { useNavigate } from 'react-router-dom';
 
-function LandingPage({ navigateTo, userRole }) {
+function LandingPage({ userRole }) {
+  const navigate = useNavigate();
   const handleGetStartedClick = () => {
     // Tombol ini akan mengarahkan ke halaman Auth (Login/Register)
-    navigateTo("auth");
+    navigate("/auth");
   };
 
   return (
     <div className="landing-page-full">
-      <Header navigateTo={navigateTo} userRole={userRole} />
+      <Header userRole={userRole} />
 
       <div className="landing-page-hero">
         {/* KIRI: Teks Utama */}

@@ -1,8 +1,10 @@
 // src/pages/WalkerConfirmationPage.jsx (Halaman 13)
 import React, { useState } from 'react';
 import Header from '../components/Header';
+import { useNavigate } from 'react-router-dom';
 
-function WalkerConfirmationPage({ navigateTo }) {
+function WalkerConfirmationPage() {
+    const navigate = useNavigate();
     // Data dummy reservasi
     const [reservation, setReservation] = useState({
         owner: 'Maria',
@@ -18,14 +20,14 @@ function WalkerConfirmationPage({ navigateTo }) {
         setReservation({ ...reservation, status: action });
         alert(`Reservasi ${action}ed! Pet Owner akan segera diinfokan.`);
         // Setelah konfirmasi, navigasi ke halaman akun walker
-        navigateTo('account'); 
+        navigate('/account');
     };
     
     // Tampilkan pesan jika sudah dikonfirmasi
     if (reservation.status !== 'pending') {
         return (
              <div className="walker-confirm-page-container">
-                <Header navigateTo={navigateTo} />
+                <Header/>
                 <div className="status-page-main" style={{ marginTop: '50px' }}>
                     <h2 className="status-message" style={{ color: '#A3D8A5' }}>
                         Reservasi telah {reservation.status === 'accepted' ? 'Diterima' : 'Ditolak'}!
@@ -41,7 +43,7 @@ function WalkerConfirmationPage({ navigateTo }) {
 
     return (
         <div className="walker-confirm-page-container">
-            <Header navigateTo={navigateTo} />
+            <Header/>
             
             <div className="walker-confirm-page-main">
                 {/* KIRI: Teks Sambutan */}

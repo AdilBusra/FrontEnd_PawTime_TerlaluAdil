@@ -2,10 +2,12 @@
 import React, { useState } from "react";
 import Header from "../components/Header";
 import api from "../api";
+import { useNavigate } from 'react-router-dom';
 
 // MODIFIKASI: Menerima setLoggedInUserRole dari App.jsx
-function AuthPage({ navigateTo, setLoggedInUserRole, userRole }) { 
+function AuthPage({ setLoggedInUserRole, userRole }) { 
   const [activeTab, setActiveTab] = useState("login");
+  const navigate = useNavigate();
 
   // STATE DAN HANDLER FORM
   const [loginForm, setLoginForm] = useState({
@@ -32,13 +34,13 @@ function AuthPage({ navigateTo, setLoggedInUserRole, userRole }) {
     }));
   };
 
-  // HANDLER SAAT FORM DI-SUBMIT (API Integration + User Role Management)
+  // HANDLER SAAT FORM DI-SUBMIT (API Integration + React Router DOM)
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
     try {
       if (activeTab === "login") {
-        // Login logic
+        // Login logic with API
         const response = await api.post("/api/auth/login", {
           email: loginForm.email,
           password: loginForm.password,
@@ -48,7 +50,7 @@ function AuthPage({ navigateTo, setLoggedInUserRole, userRole }) {
         if (response.data && response.data.token) {
           localStorage.setItem("token", response.data.token);
           
-          // Redirect based on user role
+          // Get user role from response
           const userRole = response.data.user?.role || response.data.role;
           
           // Update user role di parent component jika ada
@@ -56,14 +58,15 @@ function AuthPage({ navigateTo, setLoggedInUserRole, userRole }) {
             setLoggedInUserRole(userRole);
           }
           
+          // Redirect based on user role using React Router
           if (userRole === "walker") {
-            navigateTo("walker");
+            navigate("/walkers");
           } else {
-            navigateTo("landing");
+            navigate("/");
           }
         }
       } else {
-        // Registration logic
+        // Registration logic with API
         const response = await api.post("/api/auth/register", {
           name: registerForm.name,
           phone: registerForm.number,
@@ -82,11 +85,11 @@ function AuthPage({ navigateTo, setLoggedInUserRole, userRole }) {
           setLoggedInUserRole(registerForm.role);
         }
 
-        // Navigate to setup page based on role
+        // Navigate to setup page based on role using React Router
         if (registerForm.role === "walker") {
-          navigateTo("walkerSetup");
+          navigate("/setup/walker");
         } else {
-          navigateTo("ownerSetup");
+          navigate("/setup/owner");
         }
       }
     } catch (error) {
@@ -96,6 +99,10 @@ function AuthPage({ navigateTo, setLoggedInUserRole, userRole }) {
       const errorMessage = error.response?.data?.message || "Authentication failed. Please try again.";
       alert(errorMessage);
     }
+  };
+
+  const switchTab = (tabName) => {
+    setActiveTab(tabName);
   };
 
   const buttonText = activeTab === "login" ? "Login" : "Registration";
@@ -177,7 +184,7 @@ function AuthPage({ navigateTo, setLoggedInUserRole, userRole }) {
 
   return (
     <div className="auth-page-container">
-   <Header navigateTo={navigateTo} userRole={userRole} />
+   <Header userRole={userRole} />
       
       <div className="auth-content-main">
         

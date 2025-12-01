@@ -2,6 +2,7 @@
 import React from 'react';
 import Header from '../components/Header';
 import { petWalkers } from '../data/mockData'; 
+import { useParams, useNavigate } from 'react-router-dom';
 
 // Komponen Pembantu untuk menampilkan Rating Bintang
 const RatingStars = ({ rating }) => {
@@ -17,19 +18,24 @@ const RatingStars = ({ rating }) => {
   return <div className="rating-stars">{stars}</div>;
 };
 
-// Komponen Utama Detail Page, menerima walkerId
-function WalkerDetailPage({ navigateTo, walkerId, userRole}) { 
+// Komponen Utama Detail Page
+function WalkerDetailPage({ userRole }) { // HILANGKAN navigateTo dan walkerId
   
+  const { id } = useParams(); // <-- AMBIL ID DARI URL (:id)
+  const navigate = useNavigate(); // <-- PANGGIL HOOK
+
   // 1. CARI DATA WALKER BERDASARKAN ID
-  const walker = petWalkers.find(w => w.id == walkerId); 
+  // ID yang didapat dari useParams adalah string
+  const walker = petWalkers.find(w => w.id == id); 
 
   if (!walker) {
     return (
       <div className="walker-detail-page-container">
-        <Header navigateTo={navigateTo} />
+        <Header userRole={userRole} /> {/* HAPUS prop navigateTo */}
         <div className="p-10 text-center text-red-500">
           <h2>Data Walker Tidak Ditemukan.</h2>
-          <button className="view-more-button" onClick={() => navigateTo('walker')}>Kembali ke Daftar</button>
+          {/* Menggunakan navigate(-1) untuk kembali ke halaman sebelumnya */}
+          <button className="view-more-button" onClick={() => navigate(-1)}>Kembali ke Daftar</button>
         </div>
       </div>
     );
@@ -37,15 +43,20 @@ function WalkerDetailPage({ navigateTo, walkerId, userRole}) {
   
   const { name, location, image, description, fee, rating } = walker;
 
-  // HANDLER UNTUK TOMBOL BOOK NOW (Mengarah ke Halaman 6: Booking)
+  // HANDLER UNTUK TOMBOL BOOK NOW (Mengarah ke /booking)
   const handleBookNow = () => {
-      // Kita kirim ID walker dan namanya ke halaman booking
-      navigateTo('booking', { walkerId: walker.id, walkerName: walker.name });
+      // Navigasi dan Meneruskan DATA melalui state
+      navigate('/booking', { 
+        state: { 
+          walkerId: walker.id, 
+          walkerName: walker.name 
+        } 
+      });
   };
 
   return (
     <div className="walker-detail-page-container">
-   <Header navigateTo={navigateTo} userRole={userRole} />
+   <Header userRole={userRole} />
 
       <div className="walker-detail-box">
         

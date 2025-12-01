@@ -2,13 +2,18 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
 import api from '../api';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // Menerima data dari halaman Walker Detail Page (jika ada)
-function BookingPage({ navigateTo, data = {} }) { 
+function BookingPage({ }) { 
+
+    const navigate = useNavigate();
+    const location = useLocation();
     
-    // Default Walker Name bisa diambil dari parameter data
-    const defaultWalkerName = data.walkerName || "Pilih Walker Dulu";
-    const walkerId = data.walkerId || null; // Ambil walker_id dari data
+    // Get data from location.state (passed from WalkerDetailPage)
+    const defaultWalkerName = location.state?.walkerName || "Pilih Walker Dulu";
+    const walkerId = location.state?.walkerId || null;
+    const pricePerHour = location.state?.pricePerHour || 50000;
 
     const [bookingForm, setBookingForm] = useState({
         walker: defaultWalkerName, // Nama Walker
@@ -41,8 +46,7 @@ function BookingPage({ navigateTo, data = {} }) {
             const startDateTime = new Date(`${bookingForm.date}T${bookingForm.time}`);
             const startTime = startDateTime.toISOString();
 
-            // Hitung total_price (asumsi: harga per jam dari data walker atau default)
-            const pricePerHour = data.pricePerHour || 50000; // Default Rp 50,000 per jam
+            // Hitung total_price
             const totalPrice = pricePerHour * bookingForm.duration;
 
             // Payload untuk backend
@@ -60,8 +64,8 @@ function BookingPage({ navigateTo, data = {} }) {
 
             if (response.status === 201) {
                 console.log('Booking created:', response.data);
-                // NAVIGASI KE HALAMAN WAITING CONFIRMATION (Halaman 7)
-                navigateTo('waiting');
+                // Navigate to waiting page using React Router
+                navigate('/status/waiting');
             }
         } catch (error) {
             console.error('Booking error:', error);
@@ -72,7 +76,7 @@ function BookingPage({ navigateTo, data = {} }) {
 
     return (
         <>
-            <Header navigateTo={navigateTo} />
+            <Header/>
             <div className="booking-content-wrap">
 
             <div className="booking-wrap">
