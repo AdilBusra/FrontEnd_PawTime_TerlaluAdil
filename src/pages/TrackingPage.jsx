@@ -21,7 +21,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 // Ganti URL ini dengan URL Ngrok Backend Anda!
 const SOCKET_URL = "https://predoubtful-nonincorporated-tonia.ngrok-free.dev"; 
 
-function TrackingPage({ userRole }) {
+function TrackingPage() {
     const [position, setPosition] = useState(null); // Koordinat Walker
     const [status, setStatus] = useState("Menunggu Sinyal Walker...");
 
@@ -30,7 +30,6 @@ function TrackingPage({ userRole }) {
         
         newSocket.on('connect', () => {
             console.log("Connected to Socket Server");
-            // Join Room Dummy (Sesuai dengan yang di-test di backend)
             newSocket.emit('join_room', 'booking-123'); 
         });
 
@@ -48,7 +47,7 @@ function TrackingPage({ userRole }) {
 
     return (
         <div className="tracking-page-container">
-            <Header navigateTo={navigateTo} userRole={userRole} />
+            <Header />
             
             <div className="tracking-page-main">
                 <h2 className="tracking-title">Live Tracking 📍</h2>
