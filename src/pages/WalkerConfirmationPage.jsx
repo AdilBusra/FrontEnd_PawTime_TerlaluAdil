@@ -53,6 +53,26 @@ function WalkerConfirmationPage() {
             });
 
             console.log('Booking updated:', response.data);
+            
+            // If accepted, ask if want to start tracking
+            if (action === 'accepted') {
+                const startTracking = window.confirm(
+                    'Booking diterima! Apakah Anda ingin mulai tracking sekarang?'
+                );
+                
+                if (startTracking) {
+                    // Get booking info
+                    const booking = bookings.find(b => b.id === bookingId);
+                    navigate('/walker-tracking', {
+                        state: {
+                            bookingId: bookingId,
+                            ownerName: booking?.owner?.name || booking?.owner_name || 'Pet Owner'
+                        }
+                    });
+                    return; // Don't remove from list yet
+                }
+            }
+            
             alert(`Reservasi ${action === 'accepted' ? 'diterima' : 'ditolak'}! Pet Owner akan segera diinfokan.`);
             
             // Remove booking dari list setelah konfirmasi
