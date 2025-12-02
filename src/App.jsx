@@ -19,14 +19,10 @@ import AccountPage from './pages/AccountPage';
 import PetOwnerPage from './pages/PetOwnerPage';
 import TrackingPage from './pages/TrackingPage'; // Live Tracking dengan Maps
 import ProtectedRoute from './components/ProtectedRoute'; // Protected Route Component
-import DevHelper from './components/DevHelper'; // Development Helper (only in dev mode)
 
 function App() {
   return (
     <div className="app-container">
-      {/* Development Helper - Shows backend connection status */}
-      <DevHelper />
-      
       {/* Container untuk semua Route */}
       <Routes>
         {/* Public Routes */}

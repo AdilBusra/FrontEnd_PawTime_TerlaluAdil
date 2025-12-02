@@ -112,29 +112,7 @@ function AuthPage({ setLoggedInUserRole, userRole }) {
       console.error("Authentication error:", error);
       
       // Display error message to user
-      let errorMessage;
-      
-      // Network Error - Backend not running
-      if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
-        errorMessage = error.userMessage || 
-          `❌ Tidak bisa terhubung ke backend!\n\n` +
-          `Backend harus running di http://localhost:5000\n\n` +
-          `Cara fix:\n` +
-          `1. Buka terminal baru\n` +
-          `2. cd ke folder backend\n` +
-          `3. Jalankan: npm start\n` +
-          `4. Refresh halaman ini\n\n` +
-          `Jika masih error, hubungi tim!`;
-      } 
-      // Backend error response
-      else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      // Default error
-      else {
-        errorMessage = "Authentication failed. Please try again.";
-      }
-      
+      const errorMessage = error.response?.data?.message || "Authentication failed. Please try again.";
       alert(errorMessage);
     } finally {
       setIsSubmitting(false);
