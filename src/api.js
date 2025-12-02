@@ -3,6 +3,12 @@ import axios from "axios";
 // Prefer environment variable, fallback to local backend during dev
 const BASE_URL = import.meta?.env?.VITE_API_URL || "http://localhost:5000";
 
+// 🔍 DEBUG: Log untuk memastikan environment variable ter-load
+console.log("🔧 API Configuration:");
+console.log("📍 BASE_URL:", BASE_URL);
+console.log("🌍 VITE_API_URL from env:", import.meta?.env?.VITE_API_URL);
+console.log("📦 All env vars:", import.meta?.env);
+
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
