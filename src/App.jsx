@@ -42,7 +42,6 @@ function App() {
         <Route path="/tracking" element={<TrackingPage />} />
         
         {/* QR Pages. Component harus bisa menangani prop type */}
-        <Route path="/qr/tracking" element={<QrPage type="tracking" />} />
         <Route path="/qr/payment" element={<QrPage type="payment" />} />
         
         <Route path="/rating" element={<RatingPage />} />
