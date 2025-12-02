@@ -2,9 +2,11 @@
 import React, { useState } from "react";
 import Header from "../components/Header";
 import { useNavigate } from 'react-router-dom';
+import api from '../api';
 
 function PetOwnerPage({ userRole }) {
   const navigateTo = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [ownerForm, setOwnerForm] = useState({
     ownerName: "",
     phoneNumber: "",
@@ -22,10 +24,38 @@ function PetOwnerPage({ userRole }) {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Data Pet Owner Siap:", ownerForm);
-    navigateTo ('/account');
+    
+    try {
+      setIsSubmitting(true);
+      
+      // Payload untuk backend
+      const payload = {
+        pet_name: ownerForm.petName,
+        pet_species: ownerForm.petSpecies,
+        pet_age: parseInt(ownerForm.petAge, 10),
+        pet_notes: ownerForm.petNotes,
+        owner_address: ownerForm.address,
+        owner_phone: ownerForm.phoneNumber,
+      };
+
+      console.log("Sending pet owner data:", payload);
+
+      // POST request ke backend
+      const response = await api.post('/api/owners/setup', payload);
+      
+      console.log('Pet owner setup successful:', response.data);
+      alert('Data peliharaan berhasil disimpan!');
+      
+      navigateTo('/account');
+    } catch (error) {
+      console.error('Error during setup:', error);
+      const errorMessage = error.response?.data?.message || 'Gagal menyimpan data. Silakan coba lagi.';
+      alert(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -126,8 +156,8 @@ function PetOwnerPage({ userRole }) {
                 placeholder="Alergi, obat-obatan, atau sifat khusus."
               ></textarea>
             </div>
-            <button type="submit" className="owner-submit-button-new">
-              Simpan Detail Peliharaan
+            <button type="submit" className="owner-submit-button-new" disabled={isSubmitting}>
+              {isSubmitting ? 'Menyimpan...' : 'Simpan Detail Peliharaan'}
             </button>
           </form>
         </div>
