@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 function AuthPage({ setLoggedInUserRole, userRole }) { 
   const [activeTab, setActiveTab] = useState("login");
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // STATE DAN HANDLER FORM
   const [loginForm, setLoginForm] = useState({
@@ -39,6 +40,7 @@ function AuthPage({ setLoggedInUserRole, userRole }) {
     e.preventDefault();
 
     try {
+      setIsSubmitting(true);
       if (activeTab === "login") {
         // Login logic with API
         const response = await api.post("/api/auth/login", {
@@ -46,28 +48,31 @@ function AuthPage({ setLoggedInUserRole, userRole }) {
           password: loginForm.password,
         });
 
-        // Save token to localStorage
-        if (response.data && response.data.token) {
-          localStorage.setItem("token", response.data.token);
-          
-          // Get user role from response
-          const userRole = response.data.user?.role || response.data.role;
-          
-          // Update user role di parent component jika ada
-          if (setLoggedInUserRole) {
-            setLoggedInUserRole(userRole);
-          }
-          
-          // Redirect based on user role using React Router
-          if (userRole === "walker") {
-            navigate("/walkers");
-          } else {
-            navigate("/");
-          }
+        // Backend returns { data: { user, token } }
+        const token = response?.data?.data?.token;
+        const user = response?.data?.data?.user;
+
+        if (token) {
+          localStorage.setItem("token", token);
+        }
+        if (user) {
+          localStorage.setItem("user", JSON.stringify(user));
+        }
+
+        const roleFromRes = user?.role;
+        if (setLoggedInUserRole && roleFromRes) {
+          setLoggedInUserRole(roleFromRes);
+        }
+
+        // Redirect based on user role using React Router
+        if (roleFromRes === "walker") {
+          navigate("/walkers");
+        } else {
+          navigate("/");
         }
       } else {
         // Registration logic with API
-        const response = await api.post("/api/auth/register", {
+        const registerRes = await api.post("/api/auth/register", {
           name: registerForm.name,
           phone: registerForm.number,
           email: registerForm.email,
@@ -75,18 +80,29 @@ function AuthPage({ setLoggedInUserRole, userRole }) {
           role: registerForm.role,
         });
 
-        // Save token to localStorage if provided
-        if (response.data && response.data.token) {
-          localStorage.setItem("token", response.data.token);
+        // Setelah register sukses, lakukan auto-login agar token tersimpan
+        const loginRes = await api.post("/api/auth/login", {
+          email: registerForm.email,
+          password: registerForm.password,
+        });
+
+        const token2 = loginRes?.data?.data?.token;
+        const user2 = loginRes?.data?.data?.user;
+        if (token2) {
+          localStorage.setItem("token", token2);
         }
-        
+        if (user2) {
+          localStorage.setItem("user", JSON.stringify(user2));
+        }
+
         // Update user role di parent component jika ada
+        const roleAfterLogin = user2?.role || registerForm.role;
         if (setLoggedInUserRole) {
-          setLoggedInUserRole(registerForm.role);
+          setLoggedInUserRole(roleAfterLogin);
         }
 
         // Navigate to setup page based on role using React Router
-        if (registerForm.role === "walker") {
+        if (roleAfterLogin === "walker") {
           navigate("/setup/walker");
         } else {
           navigate("/setup/owner");
@@ -98,6 +114,8 @@ function AuthPage({ setLoggedInUserRole, userRole }) {
       // Display error message to user
       const errorMessage = error.response?.data?.message || "Authentication failed. Please try again.";
       alert(errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -105,7 +123,9 @@ function AuthPage({ setLoggedInUserRole, userRole }) {
     setActiveTab(tabName);
   };
 
-  const buttonText = activeTab === "login" ? "Login" : "Registration";
+  const buttonText = isSubmitting
+    ? (activeTab === "login" ? "Logging in..." : "Registering...")
+    : (activeTab === "login" ? "Login" : "Registration");
   const buttonClass = activeTab === "login" ? "login-button" : "registration-button";
   
   const renderWelcomeText = () => {
@@ -199,12 +219,14 @@ function AuthPage({ setLoggedInUserRole, userRole }) {
             <button 
               className={`tab-button ${activeTab === 'login' ? 'active' : ''}`}
               onClick={() => switchTab('login')}
+              disabled={isSubmitting}
             >
               Login
             </button>
             <button 
               className={`tab-button ${activeTab === 'register' ? 'active' : ''}`}
               onClick={() => switchTab('register')}
+              disabled={isSubmitting}
             >
               Registration
             </button>
@@ -216,7 +238,7 @@ function AuthPage({ setLoggedInUserRole, userRole }) {
               {renderFormContent()}
               
               {/* Tombol Utama */}
-              <button type="submit" className={`auth-main-button ${buttonClass}`}>
+              <button type="submit" className={`auth-main-button ${buttonClass}`} disabled={isSubmitting}>
                 {buttonText}
               </button>
             </form>

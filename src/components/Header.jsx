@@ -7,12 +7,12 @@ function Header({ userRole }) {
   
   const navigate = useNavigate(); // <-- Panggil Hook
   
+  // Check if user is logged in
+  const isLoggedIn = !!localStorage.getItem('token');
+  
   // FUNGSI UTAMA UNTUK NAVIGASI KONDISIONAL
   const handleNavClick = (e, targetPage) => {
     e.preventDefault(); 
-    
-    // Status login: Jika userRole adalah string ('owner'/'walker'), maka TRUE
-    const isLoggedIn = userRole !== null; 
     
     // Rute yang membutuhkan otentikasi (SEKARANG TERMASUK 'walker')
     const requiresAuth = (targetPage === 'walkers' || targetPage === 'booking'); // Ubah 'walker' menjadi URL path '/walkers'
@@ -32,6 +32,23 @@ function Header({ userRole }) {
       // 'auth' -> '/auth'
       const urlPath = targetPage === 'walker' ? '/walkers' : `/${targetPage}`;
       navigate(urlPath);
+    }
+  };
+
+  // Handle Logout
+  const handleLogout = (e) => {
+    e.preventDefault();
+    
+    if (window.confirm('Apakah Anda yakin ingin logout?')) {
+      // Clear localStorage
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      
+      // Redirect to landing page
+      navigate('/');
+      
+      // Optional: Reload page to reset state
+      window.location.reload();
     }
   };
 
@@ -73,6 +90,21 @@ function Header({ userRole }) {
           >
             Account
           </a>
+          
+          {/* Show Logout button if logged in */}
+          {isLoggedIn && (
+            <>
+              <span className="separator">|</span>
+              <a 
+                href="#" 
+                className="nav-link"
+                onClick={handleLogout}
+                style={{ color: '#ff6b6b' }}
+              >
+                Logout
+              </a>
+            </>
+          )}
         </nav>
 
       </div>

@@ -1,58 +1,133 @@
 // src/pages/StatusPage.jsx (Halaman 7 & 8)
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import api from '../api';
 
 // Kita gunakan 'isConfirmed' sebagai state untuk beralih antara Halaman 7 dan 8
-function StatusPage() { // HILANGKAN navigateTo
+function StatusPage() {
     
-    const navigate = useNavigate(); // <-- PANGGIL HOOK
+    const navigate = useNavigate();
+    const location = useLocation();
     
-    // State ini akan disimulasikan sebagai respons dari backend Walker
-    const [isConfirmed, setIsConfirmed] = useState(false); 
+    // Get booking ID from navigation state
+    const bookingId = location.state?.bookingId || null;
+    const walkerName = location.state?.walkerName || "Pet Walker";
+    const walkerId = location.state?.walkerId || null;
+    
+    const [bookingStatus, setBookingStatus] = useState('pending');
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [bookingData, setBookingData] = useState(null);
 
-    // Simulasi proses menunggu konfirmasi
-    useEffect(() => {
-        // Simulasi menunggu 3 detik, lalu konfirmasi
-        const timer = setTimeout(() => {
+    // Fetch booking status
+    const fetchBookingStatus = async () => {
+        if (!bookingId) {
+            setError('Booking ID tidak ditemukan');
             setIsLoading(false);
-            // Anda bisa set isConfirmed(true) jika ingin langsung loncat ke Halaman 8
-            // Untuk demo, kita biarkan false, dan user harus klik refresh
-        }, 3000); 
+            return;
+        }
 
-        return () => clearTimeout(timer);
-    }, []);
-
-    const handleRefresh = () => {
-        if (!isConfirmed) {
-            alert("Mengecek konfirmasi... (Simulasi: Konfirmasi Diterima)");
-            setIsConfirmed(true); // Ganti status setelah refresh
+        try {
+            const response = await api.get(`/api/bookings/${bookingId}`);
+            const booking = response.data.data || response.data;
+            
+            console.log('Booking status:', booking);
+            
+            setBookingData(booking);
+            setBookingStatus(booking.status || 'pending');
+            setError(null);
+        } catch (err) {
+            console.error('Error fetching booking status:', err);
+            setError('Gagal memuat status booking');
+        } finally {
+            setIsLoading(false);
         }
     };
-    
-    // Simulasi Walker Confirmation (Halaman 7)
-    if (!isConfirmed) {
+
+    // Initial fetch dan polling setiap 5 detik
+    useEffect(() => {
+        fetchBookingStatus();
+        
+        // Poll setiap 5 detik jika status masih pending
+        const interval = setInterval(() => {
+            if (bookingStatus === 'pending') {
+                fetchBookingStatus();
+            }
+        }, 5000);
+
+        return () => clearInterval(interval);
+    }, [bookingId, bookingStatus]);
+
+    const handleRefresh = () => {
+        setIsLoading(true);
+        fetchBookingStatus();
+    };
+
+    // Error state
+    if (error && !bookingId) {
         return (
             <div className="waiting-page-container">
                 <Header/>
                 <div className="status-page-main">
-                    <span className="waiting-icon">⏰</span> {/* Ikon Jam (Halaman 7) */}
-                    <h2 className="status-message">Waiting The Pet Walker to confirmed your booking...</h2>
-                    <p className="status-subtext">Mohon tunggu sebentar, Walker sedang memproses permintaan Anda.</p>
+                    <h2 className="status-message" style={{ color: '#ff6b6b' }}>{error}</h2>
+                    <p className="status-subtext">Silakan kembali dan coba booking lagi.</p>
                     <button 
                         className="refresh-button"
-                        onClick={handleRefresh}
-                        disabled={isLoading}
+                        onClick={() => navigate('/walkers')}
                     >
-                        {isLoading ? 'Memuat...' : 'Refresh'}
+                        Kembali ke Daftar Walker
                     </button>
                 </div>
             </div>
         );
     }
     
-    // Confirmed Booking (Halaman 8)
+    // Simulasi Walker Confirmation (Halaman 7) - Pending Status
+    if (bookingStatus === 'pending') {
+        return (
+            <div className="waiting-page-container">
+                <Header/>
+                <div className="status-page-main">
+                    <span className="waiting-icon">⏰</span>
+                    <h2 className="status-message">Waiting The Pet Walker to confirmed your booking...</h2>
+                    <p className="status-subtext">Mohon tunggu sebentar, Walker sedang memproses permintaan Anda.</p>
+                    <p className="status-subtext" style={{ fontSize: '12px', marginTop: '10px' }}>
+                        (Auto-refresh setiap 5 detik)
+                    </p>
+                    <button 
+                        className="refresh-button"
+                        onClick={handleRefresh}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? 'Memuat...' : 'Refresh Sekarang'}
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // Rejected Status
+    if (bookingStatus === 'rejected') {
+        return (
+            <div className="waiting-page-container">
+                <Header/>
+                <div className="status-page-main">
+                    <h2 className="status-message" style={{ color: '#ff6b6b' }}>Booking Ditolak 😢</h2>
+                    <p className="status-subtext">Maaf, Walker tidak dapat menerima booking Anda saat ini.</p>
+                    <p className="status-subtext">Silakan coba walker lain atau waktu yang berbeda.</p>
+                    <button 
+                        className="refresh-button"
+                        onClick={() => navigate('/walkers')}
+                    >
+                        Cari Walker Lain
+                    </button>
+                </div>
+            </div>
+        );
+    }
+    
+    // Confirmed Booking (Halaman 8) - Accepted Status
     return (
         <div className="confirmed-page-container">
             <Header/>
@@ -65,19 +140,25 @@ function StatusPage() { // HILANGKAN navigateTo
                 <div className="confirmed-actions">
                     <button 
                         className="action-button primary" 
-                        onClick={() => navigate('/qr/tracking')} // Halaman 9
+                        onClick={() => navigate('/tracking', { 
+                            state: { bookingId, walkerName, walkerId } 
+                        })}
                     >
                         Tracking
                     </button>
                     <button 
                         className="action-button secondary" 
-                        onClick={() => navigate('/qr/payment')} // Halaman 10
+                        onClick={() => navigate('/qr/payment', { 
+                            state: { bookingId, totalPrice: bookingData?.total_price } 
+                        })}
                     >
                         Payment
                     </button>
                     <button 
                         className="action-button secondary" 
-                        onClick={() => navigate('/rating')} // Halaman 11
+                        onClick={() => navigate('/rating', { 
+                            state: { bookingId, walkerName, walkerId } 
+                        })}
                     >
                         Rating
                     </button>

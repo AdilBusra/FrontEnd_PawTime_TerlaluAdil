@@ -2,28 +2,65 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
 import chris from '../assets/download(9).jpeg'; // Ambil gambar Christella dari mockData
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import api from '../api';
 
 function RatingPage() {
     const navigate = useNavigate();
+    const location = useLocation();
+    
+    // Get booking data from navigation state
+    const bookingId = location.state?.bookingId || null;
+    const walkerName = location.state?.walkerName || "Pet Walker";
+    const walkerId = location.state?.walkerId || null;
+    
     const [rating, setRating] = useState(0); // State untuk bintang
     const [review, setReview] = useState('');
-    const walkerName = "Christella"; // Contoh: Ambil dari state global
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleRatingClick = (newRating) => {
         setRating(newRating);
     };
 
-    const handleSubmitRating = (e) => {
+    const handleSubmitRating = async (e) => {
         e.preventDefault();
+        
         if (rating === 0) {
             alert("Mohon berikan rating bintang terlebih dahulu.");
             return;
         }
-        console.log(`Rating untuk ${walkerName}: ${rating} bintang. Review: ${review}`);
-        alert(`Terima kasih atas rating dan ulasannya untuk ${walkerName}!`);
-        // Arahkan kembali ke halaman beranda atau akun
-        navigateTo('landing'); 
+
+        if (!bookingId) {
+            alert("Booking ID tidak ditemukan. Silakan coba lagi dari halaman booking.");
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+            
+            const payload = {
+                booking_id: bookingId,
+                walker_id: walkerId,
+                rating: rating,
+                review: review.trim() || null
+            };
+
+            console.log('Submitting rating:', payload);
+
+            const response = await api.post('/api/ratings', payload);
+            
+            console.log('Rating submitted:', response.data);
+            alert(`Terima kasih atas rating dan ulasannya untuk ${walkerName}!`);
+            
+            // Arahkan kembali ke halaman beranda atau akun
+            navigate('/');
+        } catch (error) {
+            console.error('Error submitting rating:', error);
+            const errorMessage = error.response?.data?.message || 'Gagal mengirim rating. Silakan coba lagi.';
+            alert(errorMessage);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     // Fungsi untuk merender bintang
@@ -79,8 +116,8 @@ function RatingPage() {
                             </div>
                         </div>
 
-                        <button type="submit" className="rating-confirm-button">
-                            Confirm
+                        <button type="submit" className="rating-confirm-button" disabled={isSubmitting}>
+                            {isSubmitting ? 'Mengirim...' : 'Confirm'}
                         </button>
                     </div>
                 </div>
