@@ -18,38 +18,95 @@ import WalkerConfirmationPage from './pages/WalkerConfirmationPage';
 import AccountPage from './pages/AccountPage';
 import PetOwnerPage from './pages/PetOwnerPage';
 import TrackingPage from './pages/TrackingPage'; // Live Tracking dengan Maps
+import ProtectedRoute from './components/ProtectedRoute'; // Protected Route Component
 
 function App() {
   return (
     <div className="app-container">
       {/* Container untuk semua Route */}
       <Routes>
-        {/* URL Path: Komponen */}
+        {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<AuthPage />} />
-        <Route path="/walkers" element={<PetWalkerPage />} />
         
-        {/* Menggunakan :id untuk detail walker. ID diakses via useParams() */}
-        <Route path="/walker/:id" element={<WalkerDetailPage />} /> 
+        {/* Protected Routes - Require Authentication */}
+        <Route path="/walkers" element={
+          <ProtectedRoute>
+            <PetWalkerPage />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/walker/:id" element={
+          <ProtectedRoute>
+            <WalkerDetailPage />
+          </ProtectedRoute>
+        } /> 
 
-        <Route path="/booking" element={<BookingPage />} /> 
+        <Route path="/booking" element={
+          <ProtectedRoute>
+            <BookingPage />
+          </ProtectedRoute>
+        } /> 
         
-        {/* Status Pages. StatusPage harus bisa menangani state isConfirmed di dalamnya */}
-        <Route path="/status/waiting" element={<StatusPage />} />
-        <Route path="/status/confirmed" element={<StatusPage isConfirmed={true} />} />
+        <Route path="/status/waiting" element={
+          <ProtectedRoute>
+            <StatusPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/status/confirmed" element={
+          <ProtectedRoute>
+            <StatusPage isConfirmed={true} />
+          </ProtectedRoute>
+        } />
         
-        {/* Live Tracking Page with Maps */}
-        <Route path="/tracking" element={<TrackingPage />} />
+        <Route path="/tracking" element={
+          <ProtectedRoute>
+            <TrackingPage />
+          </ProtectedRoute>
+        } />
         
-        {/* QR Pages. Component harus bisa menangani prop type */}
-        <Route path="/qr/tracking" element={<QrPage type="tracking" />} />
-        <Route path="/qr/payment" element={<QrPage type="payment" />} />
+        <Route path="/qr/tracking" element={
+          <ProtectedRoute>
+            <QrPage type="tracking" />
+          </ProtectedRoute>
+        } />
+        <Route path="/qr/payment" element={
+          <ProtectedRoute>
+            <QrPage type="payment" />
+          </ProtectedRoute>
+        } />
         
-        <Route path="/rating" element={<RatingPage />} />
-        <Route path="/setup/walker" element={<WalkerSetupPage />} />
-        <Route path="/setup/confirm" element={<WalkerConfirmationPage />} />
-        <Route path="/account" element={<AccountPage />} />
-        <Route path="/setup/owner" element={<PetOwnerPage />} />
+        <Route path="/rating" element={
+          <ProtectedRoute>
+            <RatingPage />
+          </ProtectedRoute>
+        } />
+        
+        {/* Walker-specific Protected Routes */}
+        <Route path="/setup/walker" element={
+          <ProtectedRoute requireRole="walker">
+            <WalkerSetupPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/setup/confirm" element={
+          <ProtectedRoute requireRole="walker">
+            <WalkerConfirmationPage />
+          </ProtectedRoute>
+        } />
+        
+        {/* Owner-specific Protected Routes */}
+        <Route path="/setup/owner" element={
+          <ProtectedRoute requireRole="owner">
+            <PetOwnerPage />
+          </ProtectedRoute>
+        } />
+        
+        {/* Account Page - All authenticated users */}
+        <Route path="/account" element={
+          <ProtectedRoute>
+            <AccountPage />
+          </ProtectedRoute>
+        } />
 
         {/* Jika tidak ada path yang cocok, arahkan ke Landing Page */}
         <Route path="*" element={<LandingPage />} />

@@ -57,15 +57,38 @@ function PetWalkerPage({ userRole }) {
         {/* Container untuk menampung grid kartu */}
         <div className="walker-grid">
           {!loading && !error && Array.isArray(walkers) && walkers.length > 0 ? (
-            walkers.map(walker => (
-              <PetWalkerCard
-                key={walker.id}
-                id={walker.id}
-                name={walker.name || walker.user?.name}
-                location={walker.location || walker.address}
-                image={walker.image || walker.profile_picture}
-              />
-            ))
+            walkers.map(walker => {
+              // Prioritas: location_name > location > address > default
+              let locationString = "Jakarta"; // Default fallback
+              
+              if (walker.location_name && typeof walker.location_name === 'string') {
+                // Prioritas pertama: location_name dari backend
+                locationString = walker.location_name;
+              } else if (walker.location && typeof walker.location === 'string') {
+                locationString = walker.location;
+              } else if (walker.address && typeof walker.address === 'string') {
+                locationString = walker.address;
+              } else if (walker.location && typeof walker.location === 'object') {
+                // Jika location adalah object
+                if (walker.location.name) {
+                  locationString = walker.location.name;
+                } else if (walker.location.city) {
+                  locationString = walker.location.city;
+                } else {
+                  locationString = JSON.stringify(walker.location);
+                }
+              }
+
+              return (
+                <PetWalkerCard
+                  key={walker.id}
+                  id={walker.id}
+                  name={walker.name || walker.user?.name || "Unknown Walker"}
+                  location={locationString}
+                  image={walker.photo_url}
+                />
+              );
+            })
           ) : (
             !loading && !error && <p className="no-walkers-message">Tidak ada walker ditemukan</p>
           )}

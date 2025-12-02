@@ -1,18 +1,83 @@
 // src/pages/AccountPage.jsx (Halaman 14)
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import christellaProfile from '../assets/download(9).jpeg'; // Contoh foto profil
 import { useNavigate } from 'react-router-dom';
+import api from '../api';
 
 function AccountPage() {
     const navigate = useNavigate();
     const [profile, setProfile] = useState({
-        name: 'Christella',
-        phone: '085208997612',
-        email: 'christella@gmail.com',
-        // Tambahkan role dan data lain jika perlu
-        role: 'walker'
+        name: '-',
+        phone: '-',
+        email: '-',
+        role: '-',
+        photo_url: null,
+        location_name: '-',
+        hourly_rate: null,
+        bio: '-',
     });
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchAccount = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const userRaw = localStorage.getItem('user');
+                if (!token || !userRaw) {
+                    alert('Anda belum login. Silakan login terlebih dahulu.');
+                    navigate('/auth');
+                    return;
+                }
+
+                const user = JSON.parse(userRaw);
+                const role = user.role || '-';
+                const baseProfile = {
+                    name: user.name || '-',
+                    phone: user.phone_number || user.number || '-',
+                    email: user.email || '-',
+                    role: role,
+                    photo_url: null,
+                    location_name: '-',
+                    hourly_rate: null,
+                    bio: '-',
+                };
+
+                if (role === 'walker') {
+                    try {
+                        // Since there is no /me endpoint, fetch all walkers and find current by user id
+                        const walkersRes = await api.get('/api/walkers');
+                        const arr = walkersRes?.data?.data || walkersRes?.data?.walkers || [];
+                        const me = Array.isArray(arr) ? arr.find(w => w.id === user.id) : null; // id returned is user_id in list
+                        if (me) {
+                            setProfile({
+                                ...baseProfile,
+                                photo_url: me.photo_url || baseProfile.photo_url,
+                                location_name: me.location_name || baseProfile.location_name,
+                                hourly_rate: me.hourly_rate ?? baseProfile.hourly_rate,
+                                bio: me.bio || baseProfile.bio,
+                            });
+                        } else {
+                            setProfile(baseProfile);
+                        }
+                    } catch (e) {
+                        setProfile(baseProfile);
+                    }
+                } else {
+                    setProfile(baseProfile);
+                }
+                setError(null);
+            } catch (err) {
+                console.error('Failed to load account:', err);
+                setError('Gagal memuat data akun. Silakan coba lagi.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAccount();
+    }, [navigate]);
     // State untuk mode edit (simulasi)
     const [isEditing, setIsEditing] = useState(null); // null, 'name', 'phone', atau 'email'
     const [tempValue, setTempValue] = useState('');
@@ -71,12 +136,14 @@ function AccountPage() {
             
             <div className="account-page-main">
                 <h2 className="profile-heading">Your Amazing Profile ❤️</h2>
+                {loading && <p className="loading-message">Loading your profile...</p>}
+                {error && <p className="error-message">{error}</p>}
                 
                 <div className="profile-card">
                     
                     {/* KIRI: Foto Profil */}
                     <div className="profile-photo-container">
-                        <img src={christellaProfile} alt={profile.name} />
+                        <img src={profile.photo_url || christellaProfile} alt={profile.name} />
                         <button className="edit-photo-btn">edit ✎</button>
                     </div>
                     
@@ -85,6 +152,13 @@ function AccountPage() {
                         {renderDetailRow('Name', 'name')}
                         {renderDetailRow('Phone Number', 'phone')}
                         {renderDetailRow('Email', 'email')}
+                        {profile.role === 'walker' && (
+                            <>
+                                {renderDetailRow('Location', 'location_name')}
+                                {renderDetailRow('Fee / Hour', 'hourly_rate')}
+                                {renderDetailRow('Bio', 'bio')}
+                            </>
+                        )}
 
                         {/* Tambahkan tombol jika Walker */}
                         {profile.role === 'walker' && (

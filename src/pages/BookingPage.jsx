@@ -1,5 +1,5 @@
 // src/pages/BookingPage.jsx (Halaman 6)
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import api from '../api';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -15,15 +15,41 @@ function BookingPage({ }) {
     const walkerId = location.state?.walkerId || null;
     const pricePerHour = location.state?.pricePerHour || 50000;
 
+    // Get user data from localStorage
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        const userRaw = localStorage.getItem('user');
+        if (userRaw) {
+            try {
+                const user = JSON.parse(userRaw);
+                setUserData(user);
+            } catch (e) {
+                console.error('Error parsing user data:', e);
+            }
+        }
+    }, []);
+
     const [bookingForm, setBookingForm] = useState({
         walker: defaultWalkerName, // Nama Walker
-        owner: 'Maria', // Simulasi nama owner yang sudah login
-        phone: '0852xxxxxx', // Simulasi data owner yang sudah login    
+        owner: userData?.name || 'Loading...', // Nama owner dari localStorage
+        phone: userData?.phone || userData?.phone_number || 'Loading...', // Phone dari localStorage
         address: '', 
         date: '',
         time: '',
         duration: 1, // Default 1 jam
     });
+
+    // Update form when userData is loaded
+    useEffect(() => {
+        if (userData) {
+            setBookingForm(prev => ({
+                ...prev,
+                owner: userData.name || 'Unknown User',
+                phone: userData.phone || userData.phone_number || '-'
+            }));
+        }
+    }, [userData]);
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -64,8 +90,19 @@ function BookingPage({ }) {
 
             if (response.status === 201) {
                 console.log('Booking created:', response.data);
-                // Navigate to waiting page using React Router
-                navigate('/status/waiting');
+                
+                // Extract booking data
+                const createdBooking = response.data.data || response.data;
+                const newBookingId = createdBooking.id || createdBooking.booking_id;
+                
+                // Navigate to waiting page with booking data
+                navigate('/status/waiting', {
+                    state: {
+                        bookingId: newBookingId,
+                        walkerName: bookingForm.walker,
+                        walkerId: walkerId
+                    }
+                });
             }
         } catch (error) {
             console.error('Booking error:', error);

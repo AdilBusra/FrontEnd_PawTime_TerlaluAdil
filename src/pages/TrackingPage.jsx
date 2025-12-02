@@ -18,8 +18,8 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 // --- KONFIGURASI SOCKET ---
-// Ganti URL ini dengan URL Ngrok Backend Anda!
-const SOCKET_URL = "https://predoubtful-nonincorporated-tonia.ngrok-free.dev"; 
+// Gunakan environment variable untuk Socket URL
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000"; 
 
 function TrackingPage() {
     const [position, setPosition] = useState(null); // Koordinat Walker

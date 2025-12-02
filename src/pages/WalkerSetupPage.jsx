@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
+import api from '../api';
+import { supabase } from '../supabaseClient';
 
 function WalkerSetupPage({ userRole }) {
   const navigate = useNavigate();
@@ -12,6 +14,7 @@ function WalkerSetupPage({ userRole }) {
     qris: null, // Untuk file QRIS
     description: '',
   });
+  const [isLoading, setIsLoading] = useState(false); // State untuk loading indicator
 
   const handleChange = (e) => {
     const { id, value, files } = e.target;
@@ -30,10 +33,97 @@ function WalkerSetupPage({ userRole }) {
     }
   };
 
-  const handleSubmit = (e) => {
+  // Fungsi helper untuk upload image ke Supabase Storage
+  const uploadToSupabase = async (file) => {
+    if (!file) return null;
+
+    try {
+      // Generate unique filename: Date.now() + '_' + file.name (hindari spasi)
+      const uniqueFileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+      const filePath = `${uniqueFileName}`;
+
+      // Upload file ke Supabase Storage bucket 'pawtime_bucket'
+      const { data, error: uploadError } = await supabase.storage
+        .from('pawtime_bucket')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw new Error(`Upload gagal: ${uploadError.message}`);
+      }
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('pawtime_bucket')
+        .getPublicUrl(filePath);
+
+      const publicUrl = urlData.publicUrl;
+      console.log('File uploaded successfully:', publicUrl);
+      return publicUrl;
+    } catch (error) {
+      console.error('Error during image upload:', error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Data Profil Walker Siap (Termasuk File):", profileForm);    // Setelah sukses, arahkan ke halaman Dashboard Akun
-    navigate('/account');
+    
+    try {
+      // Set loading state
+      setIsLoading(true);
+      console.log("Mulai upload file...");
+
+      // Upload profile photo
+      let photoUrl = null;
+      if (profileForm.photo) {
+        console.log("Uploading photo...");
+        photoUrl = await uploadToSupabase(profileForm.photo);
+      }
+
+      // Upload QRIS image
+      let qrisUrl = null;
+      if (profileForm.qris) {
+        console.log("Uploading QRIS...");
+        qrisUrl = await uploadToSupabase(profileForm.qris);
+      }
+
+      // Prepare payload untuk backend
+      const payload = {
+        location_name: profileForm.location,
+        hourly_rate: parseInt(profileForm.fee, 10), // Convert to number
+        bio: profileForm.description,
+        photo_url: photoUrl,
+        qris_url: qrisUrl,
+      };
+
+      console.log("Payload untuk backend:", payload);
+
+      // Pastikan token ada sebelum kirim request (untuk mencegah 401)
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Anda belum login. Silakan login terlebih dahulu.');
+      }
+
+      // Send data ke backend API (pakai instance api agar Authorization tersisip otomatis)
+      // Tambahkan header Authorization secara eksplisit sebagai jaga-jaga
+      const response = await api.post(
+        '/api/walkers/setup',
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log('Walker setup successful:', response.data);
+
+      alert('Profil Walker berhasil disimpan!');
+      // Setelah sukses, arahkan ke halaman Account
+      navigate('/account');
+    } catch (error) {
+      console.error('Error during setup:', error);
+      alert(`Gagal menyimpan profil: ${error.message}`);
+    } finally {
+      // Reset loading state
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -111,7 +201,13 @@ function WalkerSetupPage({ userRole }) {
               />
             </div>
 
-            <button type="submit" className="setup-submit-button-new">Submit</button>
+            <button 
+              type="submit" 
+              className="setup-submit-button-new"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Loading...' : 'Submit'}
+            </button>
           </form>
         </div>
       </div>
