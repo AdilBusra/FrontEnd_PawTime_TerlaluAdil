@@ -276,7 +276,7 @@ html, body {
 }
 .walker-image {
     width: 100%;
-    max-height: 300px;
+    max-height: 250px;
     object-fit: cover;
     border-radius: 30px;
     margin-bottom: 15px;
@@ -407,7 +407,7 @@ html, body {
 }
 .detail-image {
     width: 100%;
-    height: 250px;
+    height: 240px;
     object-fit: cover;
     border-radius: 30px;
     margin-bottom: 15px;
@@ -415,19 +415,20 @@ html, body {
 .detail-name {
     font-size: 24px;
     font-weight: 700;
-    color: #4A69BB;
-    margin: 0 0 5px;
+    color: white;
+    margin: auto;
 }
 .detail-location {
-    font-size: 16px;
-    color: #666;
+    font-size: 18px;
+    color: white;
     margin-bottom: 20px;
 }
 .walker-meta {
     flex: 1;
     background-color: #4A70A9; /* Biru Tua Detail Box */
     padding: 30px;
-    border-radius: 12px;
+    border-radius: 20px;
+    height: 340px;
     color: white;
 }
 .meta-row {
@@ -463,6 +464,12 @@ html, body {
     color: #ccc;
 }
 .book-now-button {
+    background-color: #92a8d1; /* Emas */
+    color: white;
+    font-size: 16px;
+    margin: 20px auto 0;
+    display: block;
+    width: 50%;
     background-color: #B5C5DA; /* Emas */
     color: #4A70A9;
     font-size: 20px;
@@ -478,6 +485,7 @@ html, body {
 }
 .book-now-button:hover {
     background-color: #EFECE3;
+    color: #4A70A9;
 }
 
 /* --- WALKER SETUP PAGE STYLES (HLM 12) --- */
@@ -808,10 +816,17 @@ html, body {
     color: white;
 }
 .refresh-button:hover {
-    background-color: #7d96c1;
+    background-color: #EFECE3;
+    color: #4A70A9;
 }
 
 /* Confirmed Page Actions */
+.status-page-main{
+    border-radius: 30px;
+    width: auto;
+    padding: auto;
+    margin-top: 20px;
+}
 .confirmed-actions {
     display: flex;
     justify-content: center;
@@ -819,12 +834,12 @@ html, body {
     margin-top: 30px;
 }
 .action-button.primary {
-    background-color: #4A69BB; /* Tracking */
+    background-color: #4A70A9; /* Tracking */
     color: white;
 }
 .action-button.secondary {
-    background-color: #FFD700; /* Payment/Rating */
-    color: #4A69BB;
+    background-color: #4A70A9; /* Payment/Rating */
+    color: white;
 }
 
 /* --- QR PAGE STYLES (HLM 9 & 10) --- */
@@ -833,7 +848,7 @@ html, body {
     padding: 60px 50px;
     max-width: 500px;
     margin: 50px auto;
-    background-color: #4A69BB; /* Biru Tua Background */
+    background-color: #4A70A9; /* Biru Tua Background */
     border-radius: 20px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     color: white;
@@ -871,7 +886,7 @@ html, body {
 .rating-page-main {
     max-width: 700px;
     margin: 50px auto;
-    background-color: #6C8ECB; /* Biru Sedang Background */
+    background-color: #4A70A9; /* Biru Sedang Background */
     padding: 40px;
     border-radius: 20px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -956,18 +971,18 @@ html, body {
 .confirm-heading {
     font-size: 40px;
     font-weight: 800;
-    color: #4A69BB;
+    color: #4A70A9;
     line-height: 1.2;
     margin-bottom: 10px;
 }
 .confirm-subtext {
     font-size: 24px;
     font-weight: 600;
-    color: #6C8ECB;
+    color: #4A70A9;
 }
 .reservation-details-box {
     width: 450px;
-    background-color: #4A69BB;
+    background-color: #4A70A9;
     padding: 30px;
     border-radius: 15px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -1000,11 +1015,11 @@ html, body {
 }
 .confirm-action-buttons .accept-btn {
     background-color: #A3D8A5; /* Hijau */
-    color: #4A69BB;
+    color: #4A70A9;
 }
 .confirm-action-buttons .reject-btn {
     background-color: #FFD700; /* Emas */
-    color: #4A69BB;
+    color: #4A70A9;
 }
 
 /* --- ACCOUNT PAGE STYLES (HLM 14) --- */
@@ -1196,7 +1211,7 @@ html, body {
     padding: 40px;
     max-width: 900px; /* Lebih lebar biar peta puas */
     margin: 40px auto;
-    background-color: #4A69BB; /* Biru Tua khas Pawtime */
+    background-color: #4A70A9; /* Biru Tua khas Pawtime */
     border-radius: 30px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     color: white;

@@ -132,8 +132,8 @@ function StatusPage() {
         <div className="confirmed-page-container">
             <Header/>
             <div className="status-page-main">
-                <h2 className="status-message" style={{ color: '#A3D8A5' }}>Your Booking is Confirmed!!! 🎉</h2>
-                <p className="status-subtext">The Walker will reach out soon to confirm the details. Keep an eye on your inbox and phone</p>
+                <h2 className="status-message" style={{ color: '#4A70A9' }}>Your Booking is Confirmed!!! 🎉</h2>
+                <p className="status-subtext" style={{ color: '#4A70A9' }}>The Walker will reach out soon to confirm the details. Keep an eye on your inbox and phone</p>
                 
                 <h3 style={{ color: '#4A69BB', margin: '30px 0 20px' }}>Other Details:</h3>
                 
