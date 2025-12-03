@@ -1,14 +1,17 @@
 // src/pages/AuthPage.jsx
 import React, { useState } from "react";
 import Header from "../components/Header";
+import AlertModal from "../components/AlertModal";
 import api from "../api";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { useAlert } from "../hooks/useAlert";
 
 // MODIFIKASI: Menerima setLoggedInUserRole dari App.jsx
-function AuthPage({ setLoggedInUserRole, userRole }) { 
+function AuthPage({ setLoggedInUserRole, userRole }) {
   const [activeTab, setActiveTab] = useState("login");
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { alertState, showAlert, closeAlert } = useAlert();
 
   // STATE DAN HANDLER FORM
   const [loginForm, setLoginForm] = useState({
@@ -17,10 +20,10 @@ function AuthPage({ setLoggedInUserRole, userRole }) {
   });
   const [registerForm, setRegisterForm] = useState({
     name: "",
-    number: "", 
+    number: "",
     email: "",
     password: "",
-    role: "owner", 
+    role: "owner",
   });
 
   const handleLoginChange = (e) => {
@@ -110,10 +113,17 @@ function AuthPage({ setLoggedInUserRole, userRole }) {
       }
     } catch (error) {
       console.error("Authentication error:", error);
-      
+
       // Display error message to user
-      const errorMessage = error.response?.data?.message || "Authentication failed. Please try again.";
-      alert(errorMessage);
+      const errorMessage =
+        error.response?.data?.message ||
+        "Authentication failed. Please try again.";
+      showAlert({
+        title: "Authentication Error",
+        message: errorMessage,
+        type: "error",
+        confirmText: "OK",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -124,51 +134,71 @@ function AuthPage({ setLoggedInUserRole, userRole }) {
   };
 
   const buttonText = isSubmitting
-    ? (activeTab === "login" ? "Logging in..." : "Registering...")
-    : (activeTab === "login" ? "Login" : "Registration");
-  const buttonClass = activeTab === "login" ? "login-button" : "registration-button";
-  
+    ? activeTab === "login"
+      ? "Logging in..."
+      : "Registering..."
+    : activeTab === "login"
+    ? "Login"
+    : "Registration";
+  const buttonClass =
+    activeTab === "login" ? "login-button" : "registration-button";
+
   const renderWelcomeText = () => {
-    if (activeTab === 'login') {
+    if (activeTab === "login") {
       return (
         <div className="welcome-text-content">
           <h2 className="welcome-heading">Welcome Back 🐶😺</h2>
-          <p className="welcome-subtext">We missed you! Your pets are waiting</p>
+          <p className="welcome-subtext">
+            We missed you! Your pets are waiting
+          </p>
         </div>
       );
     }
     return (
       <div className="welcome-text-content">
         <h2 className="welcome-heading">First Timer? 😍</h2>
-        <p className="welcome-subtext">
-          Ready to book a Walker or become one?
-        </p>
+        <p className="welcome-subtext">Ready to book a Walker or become one?</p>
       </div>
     );
   };
-  
+
   const renderFormContent = () => {
-    if (activeTab === 'login') {
+    if (activeTab === "login") {
       return (
         <div className="form-inner-content">
           <div className="input-group-auth">
             <label htmlFor="email">Email</label>
-            <input type="email" id="email" value={loginForm.email} onChange={handleLoginChange} />
+            <input
+              type="email"
+              id="email"
+              value={loginForm.email}
+              onChange={handleLoginChange}
+            />
           </div>
           <div className="input-group-auth">
             <label htmlFor="password">Password</label>
-            <input type="password" id="password" value={loginForm.password} onChange={handleLoginChange} />
+            <input
+              type="password"
+              id="password"
+              value={loginForm.password}
+              onChange={handleLoginChange}
+            />
           </div>
         </div>
       );
     }
-    
+
     // Tampilan Registration
     return (
       <div className="form-inner-content registration-form-inner">
         <div className="input-group-auth">
           <label htmlFor="name">Name</label>
-          <input type="text" id="name" value={registerForm.name} onChange={handleRegisterChange} />
+          <input
+            type="text"
+            id="name"
+            value={registerForm.name}
+            onChange={handleRegisterChange}
+          />
         </div>
         <div className="input-group-auth">
           <label htmlFor="number">No Number</label>
@@ -181,70 +211,111 @@ function AuthPage({ setLoggedInUserRole, userRole }) {
         </div>
         <div className="input-group-auth">
           <label htmlFor="email">Email</label>
-          <input type="email" id="email" value={registerForm.email} onChange={handleRegisterChange} />
+          <input
+            type="email"
+            id="email"
+            value={registerForm.email}
+            onChange={handleRegisterChange}
+          />
         </div>
         <div className="input-group-auth">
           <label htmlFor="password">Password</label>
-          <input type="password" id="password" value={registerForm.password} onChange={handleRegisterChange} />
+          <input
+            type="password"
+            id="password"
+            value={registerForm.password}
+            onChange={handleRegisterChange}
+          />
         </div>
-        
+
         {/* Radio Button untuk Role */}
         <div className="role-selection">
           <label>
-            <input type="radio" name="role" value="owner" checked={registerForm.role === 'owner'} onChange={handleRegisterChange} /> Pet Owner
+            <input
+              type="radio"
+              name="role"
+              value="owner"
+              checked={registerForm.role === "owner"}
+              onChange={handleRegisterChange}
+            />{" "}
+            Pet Owner
           </label>
           <label>
-            <input type="radio" name="role" value="walker" checked={registerForm.role === 'walker'} onChange={handleRegisterChange} /> Pet Walker
+            <input
+              type="radio"
+              name="role"
+              value="walker"
+              checked={registerForm.role === "walker"}
+              onChange={handleRegisterChange}
+            />{" "}
+            Pet Walker
           </label>
         </div>
       </div>
     );
   };
 
-
   return (
     <div className="auth-page-container">
-   <Header userRole={userRole} />
-      
+      <Header userRole={userRole} />
+
       <div className="auth-content-main">
-        
         {/* KIRI: Teks Sambutan */}
         {renderWelcomeText()}
 
         {/* KANAN: Kotak Formulir Utama (INI ADALAH MARKUP YANG PALING SERING HILANG!) */}
         <div className="auth-form-box">
-          
           {/* Tabs Navigation */}
           <div className="tab-nav">
-            <button 
-              className={`tab-button ${activeTab === 'login' ? 'active' : ''}`}
-              onClick={() => switchTab('login')}
+            <button
+              className={`tab-button ${activeTab === "login" ? "active" : ""}`}
+              onClick={() => switchTab("login")}
               disabled={isSubmitting}
             >
               Login
             </button>
-            <button 
-              className={`tab-button ${activeTab === 'register' ? 'active' : ''}`}
-              onClick={() => switchTab('register')}
+            <button
+              className={`tab-button ${
+                activeTab === "register" ? "active" : ""
+              }`}
+              onClick={() => switchTab("register")}
               disabled={isSubmitting}
             >
               Registration
             </button>
           </div>
-          
+
           {/* Konten Formulir */}
-          <div className={`form-container ${activeTab === 'login' ? 'login-bg' : 'register-bg'}`}>
+          <div
+            className={`form-container ${
+              activeTab === "login" ? "login-bg" : "register-bg"
+            }`}
+          >
             <form onSubmit={handleFormSubmit}>
               {renderFormContent()}
-              
+
               {/* Tombol Utama */}
-              <button type="submit" className={`auth-main-button ${buttonClass}`} disabled={isSubmitting}>
+              <button
+                type="submit"
+                className={`auth-main-button ${buttonClass}`}
+                disabled={isSubmitting}
+              >
                 {buttonText}
               </button>
             </form>
           </div>
         </div>
       </div>
+
+      <AlertModal
+        isOpen={alertState.isOpen}
+        title={alertState.title}
+        message={alertState.message}
+        type={alertState.type}
+        confirmText={alertState.confirmText}
+        onClose={closeAlert}
+        onConfirm={alertState.onConfirm}
+      />
     </div>
   );
 }
