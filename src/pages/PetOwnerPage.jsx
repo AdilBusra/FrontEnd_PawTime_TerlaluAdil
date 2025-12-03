@@ -1,11 +1,14 @@
 // src/pages/PetOwnerPage.jsx
 import React, { useState } from "react";
 import Header from "../components/Header";
-import { useNavigate } from 'react-router-dom';
-import api from '../api';
+import AlertModal from "../components/AlertModal";
+import { useNavigate } from "react-router-dom";
+import api from "../api";
+import { useAlert } from "../hooks/useAlert";
 
 function PetOwnerPage({ userRole }) {
   const navigateTo = useNavigate();
+  const { alertState, showAlert, closeAlert } = useAlert();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ownerForm, setOwnerForm] = useState({
     ownerName: "",
@@ -26,10 +29,10 @@ function PetOwnerPage({ userRole }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       setIsSubmitting(true);
-      
+
       // Payload untuk backend
       const payload = {
         pet_name: ownerForm.petName,
@@ -43,16 +46,27 @@ function PetOwnerPage({ userRole }) {
       console.log("Sending pet owner data:", payload);
 
       // POST request ke backend
-      const response = await api.post('/api/owners/setup', payload);
-      
-      console.log('Pet owner setup successful:', response.data);
-      alert('Data peliharaan berhasil disimpan!');
-      
-      navigateTo('/account');
+      const response = await api.post("/api/owners/setup", payload);
+
+      console.log("Pet owner setup successful:", response.data);
+      showAlert({
+        title: "Success",
+        message: "Data peliharaan berhasil disimpan!",
+        type: "success",
+        confirmText: "OK",
+        onConfirm: () => navigateTo("/account"),
+      });
     } catch (error) {
-      console.error('Error during setup:', error);
-      const errorMessage = error.response?.data?.message || 'Gagal menyimpan data. Silakan coba lagi.';
-      alert(errorMessage);
+      console.error("Error during setup:", error);
+      const errorMessage =
+        error.response?.data?.message ||
+        "Gagal menyimpan data. Silakan coba lagi.";
+      showAlert({
+        title: "Setup Failed",
+        message: errorMessage,
+        type: "error",
+        confirmText: "OK",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -60,7 +74,7 @@ function PetOwnerPage({ userRole }) {
 
   return (
     <div className="pet-owner-page-container">
-    <Header userRole={userRole} />
+      <Header userRole={userRole} />
 
       <div className="owner-setup-content-main">
         {" "}
@@ -122,7 +136,7 @@ function PetOwnerPage({ userRole }) {
                 required
               />
             </div>
-          
+
             <div className="owner-input-group-new">
               <label htmlFor="petSpecies">Type of Pet</label>
               <input
@@ -155,12 +169,26 @@ function PetOwnerPage({ userRole }) {
                 placeholder="Alergi, drugs, or etc."
               ></textarea>
             </div>
-            <button type="submit" className="owner-submit-button-new" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save & Continue'}
+            <button
+              type="submit"
+              className="owner-submit-button-new"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Saving..." : "Save & Continue"}
             </button>
           </form>
         </div>
       </div>
+
+      <AlertModal
+        isOpen={alertState.isOpen}
+        title={alertState.title}
+        message={alertState.message}
+        type={alertState.type}
+        confirmText={alertState.confirmText}
+        onClose={closeAlert}
+        onConfirm={alertState.onConfirm}
+      />
     </div>
   );
 }
