@@ -398,17 +398,18 @@ html, body {
 }
 .walker-info-box {
     width: 250px;
+    height: 355px;
     text-align: center;
-    background-color: white;
+    background-color: #4A70A9;
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 .detail-image {
     width: 100%;
     height: 250px;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 30px;
     margin-bottom: 15px;
 }
 .detail-name {
@@ -424,7 +425,7 @@ html, body {
 }
 .walker-meta {
     flex: 1;
-    background-color: #4A69BB; /* Biru Tua Detail Box */
+    background-color: #4A70A9; /* Biru Tua Detail Box */
     padding: 30px;
     border-radius: 12px;
     color: white;
@@ -450,7 +451,7 @@ html, body {
 }
 .fee-text {
     font-weight: 700;
-    color: #FFD700; /* Emas untuk Fee */
+    color: white;
 }
 .rating-stars {
     color: gold;
@@ -462,19 +463,21 @@ html, body {
     color: #ccc;
 }
 .book-now-button {
-    background-color: #92a8d1; /* Emas */
-    color: #4A69BB;
+    background-color: #B5C5DA; /* Emas */
+    color: #4A70A9;
     font-size: 20px;
     padding: 12px 30px;
     border: none;
-    border-radius: 10px;
+    border-radius: 20px;
     font-weight: 700;
     cursor: pointer;
-    margin-top: 20px;
+    width: 50%;
+    margin: 20px auto 0;
+    display: block;
     transition: background-color 0.2s;
 }
 .book-now-button:hover {
-    background-color: #e6c200;
+    background-color: #EFECE3;
 }
 
 /* --- WALKER SETUP PAGE STYLES (HLM 12) --- */
@@ -483,7 +486,7 @@ html, body {
     justify-content: space-around;
     align-items: center;
     padding: 60px 80px;
-    max-width: 1200px;
+    max-width: 1500px;
     margin: 0 auto;
     gap: 50px;
 }
@@ -495,24 +498,25 @@ html, body {
 .setup-welcome-heading {
     font-size: 40px;
     font-weight: 800;
-    color: #4A69BB;
+    color: #4A70A9;
     line-height: 1.2;
     margin-bottom: 10px;
 }
 .setup-welcome-subtext {
     font-size: 24px;
     font-weight: 600;
-    color: #6C8ECB;
+    color: #4A70A9;
 }
 .setup-form-box-new {
     width: 450px;
-    background-color: #4A69BB; /* Biru Tua Form Background */
+    background-color: #4A70A9; /* Biru Tua Form Background */
     padding: 30px;
     border-radius: 15px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     color: white;
 }
 .setup-form-new {
+    margin-bottom: 20px;
     display: flex;
     flex-direction: column;
 }
@@ -522,17 +526,31 @@ html, body {
 .setup-input-group-new label {
     display: block;
     font-weight: 600;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
 .setup-input-group-new input:not([type="file"]), 
 .setup-input-group-new textarea {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border: none;
-    border-radius: 8px;
+    border-radius: 15px;
     font-size: 16px;
     box-sizing: border-box;
     font-family: inherit;
+}
+.setup-input-group-new.uploaded input:not([type="file"]) {
+    background-color: #A3D8A5; /* Hijau - sudah upload */
+    border: 2px solid #4CAF50;
+    color: #2d5016;
+}
+
+.setup-input-group-new.uploaded::after {
+    content: "✓ Photo uploaded";
+    display: block;
+    color: #4CAF50;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 5px;
 }
 .setup-input-group-new textarea {
     resize: vertical;
@@ -549,7 +567,7 @@ html, body {
     display: inline-block;
     flex: 1;
     background-color: white;
-    border-radius: 8px;
+    border-radius: 15px;
 }
 .file-upload-wrapper input[type="file"] {
     position: absolute;
@@ -565,53 +583,57 @@ html, body {
     padding: 10px;
     text-align: center;
     background-color: white;
-    color: #4A69BB;
+    color: #4A70A9;
     font-weight: 600;
     cursor: pointer;
 }
 .setup-submit-button-new {
+    width: 50%;
+    margin: 20px auto 0;
+    display: block;
     padding: 12px;
-    background-color: #92a8d1; /* Biru Pucat */
+    background-color: #8FABD4; /* Biru Pucat */
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 20px;
     font-size: 18px;
     font-weight: 700;
     cursor: pointer;
-    margin-top: 20px;
     transition: background-color 0.2s;
 }
 .setup-submit-button-new:hover {
-    background-color: #7d96c1;
+    background-color: #EFECE3;
+    color: #4A70A9;
 }
 
 /* --- PET OWNER SETUP PAGE STYLES --- */
 .owner-setup-content-main {
     display: flex;
     justify-content: space-around;
-    align-items: flex-start;
-    padding: 60px 80px;
-    max-width: 1200px;
+    align-items: center;
+    padding: 30px 80px;
+    max-width: 1450px;
     margin: 0 auto;
     gap: 50px;
 }
 .owner-setup-welcome-heading {
-    font-size: 36px;
+    font-size: 48px;
     font-weight: 700;
-    color: #4A69BB;
+    color: #4A70A9;
     line-height: 1.3;
     margin-bottom: 10px;
 }
 .owner-setup-welcome-subtext {
-    font-size: 18px;
-    color: #6C8ECB;
+    font-size: 20px;
+    color: #4A70A9;
     line-height: 1.4;
 }
 .owner-setup-form-box-new {
+    font-size: 20px;
     width: 550px;
-    background-color: #6C8ECB; /* Biru Sedang Form Background */
+    background-color: #4A70A9; /* Biru Sedang Form Background */
     padding: 30px;
-    border-radius: 15px;
+    border-radius: 30px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     color: white;
 }
@@ -635,7 +657,7 @@ html, body {
     width: 100%;
     padding: 10px;
     border: none;
-    border-radius: 8px;
+    border-radius: 15px;
     font-size: 16px;
     box-sizing: border-box;
     font-family: inherit;
@@ -648,18 +670,21 @@ html, body {
 }
 .owner-submit-button-new {
     padding: 15px;
-    background-color: #4A69BB; /* Biru Tua */
+    margin: 20px auto 0;
+    display: block;
+    width: 50%;
+    background-color: #B5C5DA; /* Biru Tua */
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 20px;
     font-size: 20px;
     font-weight: 700;
     cursor: pointer;
-    margin-top: 30px;
     transition: background-color 0.2s;
 }
 .owner-submit-button-new:hover {
-    background-color: #3f5898;
+    background-color: #EFECE3;
+    color: #4A70A9;
 }
 
 /* --- BOOKING PAGE STYLES (HLM 6) --- */
@@ -988,15 +1013,15 @@ html, body {
     padding: 60px 50px;
 }
 .profile-heading {
-    font-size: 40px;
+    font-size: 48px;
     font-weight: 800;
-    color: #4A69BB;
+    color: #4A70A9;
     margin-bottom: 40px;
 }
 .profile-card {
     max-width: 700px;
     margin: 0 auto;
-    background-color: #6C8ECB; /* Biru Sedang */
+    background-color: #4A70A9; /* Biru Sedang */
     padding: 40px;
     border-radius: 20px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -1053,7 +1078,6 @@ html, body {
 }
 
 /* --- ACCOUNT PAGE / DASHBOARD STYLES --- */
-
 .dashboard-main-content {
     max-width: 1000px;
     margin: 50px auto;
