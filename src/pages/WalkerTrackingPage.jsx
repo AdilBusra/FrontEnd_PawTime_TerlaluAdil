@@ -111,21 +111,31 @@ function WalkerTrackingPage() {
         // Watch position with high accuracy
         watchIdRef.current = navigator.geolocation.watchPosition(
             (position) => {
+                const accuracy = position.coords.accuracy;
+                
+                // ⚠️ FILTER: Tolak lokasi dengan akurasi buruk (> 100m)
+                if (accuracy > 100) {
+                    console.warn(`⚠️ Lokasi ditolak: akurasi terlalu rendah (${accuracy.toFixed(0)}m)`);
+                    setError(`Akurasi GPS buruk: ±${accuracy.toFixed(0)}m. Menunggu sinyal lebih baik...`);
+                    setStatus('Menunggu GPS akurat...');
+                    return; // Skip lokasi ini
+                }
+
                 const locationData = {
                     bookingId: bookingId,
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
                     walkerId: walkerId,
-                    accuracy: position.coords.accuracy,
+                    accuracy: accuracy,
                     timestamp: new Date(position.timestamp).toISOString()
                 };
 
-                console.log('📍 Sending location:', locationData);
+                console.log(`📍 Lokasi valid (±${accuracy.toFixed(0)}m):`, locationData);
 
                 // Update local state
                 setCurrentPosition(locationData);
                 setLocationCount(prev => prev + 1);
-                setStatus('Tracking aktif - Lokasi dikirim');
+                setStatus(`Tracking aktif (±${accuracy.toFixed(0)}m)`);
                 setError(null);
 
                 // Throttle immediate emits to at most once per 30s
@@ -163,8 +173,8 @@ function WalkerTrackingPage() {
             },
             {
                 enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
+                timeout: 15000, // Perpanjang timeout untuk lock GPS lebih baik
+                maximumAge: 5000 // Izinkan cache hingga 5 detik untuk stabilitas
             }
         );
 
@@ -173,6 +183,13 @@ function WalkerTrackingPage() {
         intervalRef.current = setInterval(() => {
             if (!socketRef.current || !socketRef.current.connected) return;
             if (!currentPosition) return;
+            
+            // ⚠️ FILTER: Jangan emit jika akurasi buruk
+            if (currentPosition.accuracy > 100) {
+                console.warn('⏱️ Periodic emit skipped: akurasi buruk');
+                return;
+            }
+            
             // Skip if moved < 10m compared to last sent
             const lastPos = lastPositionRef.current;
             const movedEnough = lastPos
