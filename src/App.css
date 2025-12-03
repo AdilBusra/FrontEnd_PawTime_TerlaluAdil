@@ -307,6 +307,81 @@ html, body {
     color: #4A70A9;
 }
 
+/* --- Responsive (Mobile First) --- */
+@media (max-width: 768px) {
+    .navbar-content {
+        padding: 12px 16px;
+        border-radius: 24px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .logo-section a {
+        font-size: 22px;
+    }
+    .action-nav {
+        font-size: 16px;
+        margin-right: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .landing-page-hero {
+        padding: 24px;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .greeting-text { font-size: 28px; }
+    .main-message { font-size: 16px; }
+    .bold-text { font-size: 18px; }
+    .get-started-button {
+        font-size: 18px;
+        padding: 12px 20px;
+        border-radius: 32px;
+    }
+
+    .auth-content-main {
+        padding: 24px;
+        flex-direction: column;
+        gap: 24px;
+    }
+    .welcome-heading { font-size: 28px; }
+    .welcome-subtext { font-size: 18px; }
+    .auth-form-box { width: 100%; }
+    .input-group-auth label { width: 100px; font-size: 16px; }
+    .input-group-auth input { font-size: 16px; }
+    .auth-main-button { width: 100%; }
+
+    .walker-list-main { padding: 24px; }
+    .walker-title { font-size: 28px; margin-bottom: 24px; }
+    .walker-grid { grid-template-columns: 1fr; gap: 16px; }
+    .walker-image { max-height: 180px; }
+    .walker-name { font-size: 18px; }
+    .walker-location { font-size: 14px; }
+
+    .walker-detail-box {
+        max-width: 100%;
+        margin: 24px;
+        padding: 20px;
+    }
+    .detail-content { flex-direction: column; gap: 20px; }
+    .walker-info-box { width: 100%; }
+    .detail-image { height: 180px; }
+    .detail-name { font-size: 20px; }
+    .meta-row { font-size: 16px; }
+    .book-now-button { width: 100%; }
+
+    /* Common utility for page containers */
+    .tracking-page-main,
+    .walker-tracking-main {
+        margin: 20px auto;
+        padding: 12px;
+        width: 92%;
+    }
+    .map-frame { height: 360px !important; }
+    .tracking-title { font-size: 22px; }
+}
+
 /* --- WALKER DETAIL PAGE STYLES (HLM 5) --- */
 .walker-detail-box {
     max-width: 800px;
@@ -323,6 +398,7 @@ html, body {
 }
 .walker-info-box {
     width: 250px;
+    height: 355px;
     text-align: center;
     background-color: #4A70A9;
     padding: 20px;
@@ -333,7 +409,7 @@ html, body {
     width: 100%;
     height: 240px;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 30px;
     margin-bottom: 15px;
 }
 .detail-name {
@@ -376,7 +452,7 @@ html, body {
 }
 .fee-text {
     font-weight: 700;
-    color: #FFD700; /* Emas untuk Fee */
+    color: white;
 }
 .rating-stars {
     color: gold;
@@ -394,11 +470,17 @@ html, body {
     margin: 20px auto 0;
     display: block;
     width: 50%;
+    background-color: #B5C5DA; /* Emas */
+    color: #4A70A9;
+    font-size: 20px;
     padding: 12px 30px;
     border: none;
     border-radius: 20px;
     font-weight: 700;
     cursor: pointer;
+    width: 50%;
+    margin: 20px auto 0;
+    display: block;
     transition: background-color 0.2s;
 }
 .book-now-button:hover {
@@ -412,7 +494,7 @@ html, body {
     justify-content: space-around;
     align-items: center;
     padding: 60px 80px;
-    max-width: 1200px;
+    max-width: 1500px;
     margin: 0 auto;
     gap: 50px;
 }
@@ -424,24 +506,25 @@ html, body {
 .setup-welcome-heading {
     font-size: 40px;
     font-weight: 800;
-    color: #4A69BB;
+    color: #4A70A9;
     line-height: 1.2;
     margin-bottom: 10px;
 }
 .setup-welcome-subtext {
     font-size: 24px;
     font-weight: 600;
-    color: #6C8ECB;
+    color: #4A70A9;
 }
 .setup-form-box-new {
     width: 450px;
-    background-color: #4A69BB; /* Biru Tua Form Background */
+    background-color: #4A70A9; /* Biru Tua Form Background */
     padding: 30px;
     border-radius: 15px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     color: white;
 }
 .setup-form-new {
+    margin-bottom: 20px;
     display: flex;
     flex-direction: column;
 }
@@ -451,17 +534,31 @@ html, body {
 .setup-input-group-new label {
     display: block;
     font-weight: 600;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
 .setup-input-group-new input:not([type="file"]), 
 .setup-input-group-new textarea {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border: none;
-    border-radius: 8px;
+    border-radius: 15px;
     font-size: 16px;
     box-sizing: border-box;
     font-family: inherit;
+}
+.setup-input-group-new.uploaded input:not([type="file"]) {
+    background-color: #A3D8A5; /* Hijau - sudah upload */
+    border: 2px solid #4CAF50;
+    color: #2d5016;
+}
+
+.setup-input-group-new.uploaded::after {
+    content: "✓ Photo uploaded";
+    display: block;
+    color: #4CAF50;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 5px;
 }
 .setup-input-group-new textarea {
     resize: vertical;
@@ -478,7 +575,7 @@ html, body {
     display: inline-block;
     flex: 1;
     background-color: white;
-    border-radius: 8px;
+    border-radius: 15px;
 }
 .file-upload-wrapper input[type="file"] {
     position: absolute;
@@ -494,24 +591,27 @@ html, body {
     padding: 10px;
     text-align: center;
     background-color: white;
-    color: #4A69BB;
+    color: #4A70A9;
     font-weight: 600;
     cursor: pointer;
 }
 .setup-submit-button-new {
+    width: 50%;
+    margin: 20px auto 0;
+    display: block;
     padding: 12px;
-    background-color: #92a8d1; /* Biru Pucat */
+    background-color: #8FABD4; /* Biru Pucat */
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 20px;
     font-size: 18px;
     font-weight: 700;
     cursor: pointer;
-    margin-top: 20px;
     transition: background-color 0.2s;
 }
 .setup-submit-button-new:hover {
-    background-color: #7d96c1;
+    background-color: #EFECE3;
+    color: #4A70A9;
 }
 
 /* --- PET OWNER SETUP PAGE STYLES --- */
@@ -993,7 +1093,6 @@ html, body {
 }
 
 /* --- ACCOUNT PAGE / DASHBOARD STYLES --- */
-
 .dashboard-main-content {
     max-width: 1000px;
     margin: 50px auto;
