@@ -18,6 +18,7 @@ import WalkerConfirmationPage from './pages/WalkerConfirmationPage';
 import AccountPage from './pages/AccountPage';
 import PetOwnerPage from './pages/PetOwnerPage';
 import TrackingPage from './pages/TrackingPage'; // Live Tracking dengan Maps
+import WalkerTrackingPage from './pages/WalkerTrackingPage'; // Walker Tracking Control
 import ProtectedRoute from './components/ProtectedRoute'; // Protected Route Component
 
 function App() {
@@ -62,6 +63,12 @@ function App() {
         <Route path="/tracking" element={
           <ProtectedRoute>
             <TrackingPage />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/walker-tracking" element={
+          <ProtectedRoute requireRole="walker">
+            <WalkerTrackingPage />
           </ProtectedRoute>
         } />
         

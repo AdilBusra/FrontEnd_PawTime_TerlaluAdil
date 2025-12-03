@@ -23,4 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-Pawtime-1/
+
+.env
+
+devnote/
