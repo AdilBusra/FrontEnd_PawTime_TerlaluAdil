@@ -22,6 +22,7 @@ function AccountPage() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [walkerId, setWalkerId] = useState(null);
 
   useEffect(() => {
     const fetchAccount = async () => {
@@ -62,6 +63,7 @@ function AccountPage() {
               ? arr.find((w) => w.id === user.id)
               : null; // id returned is user_id in list
             if (me) {
+              setWalkerId(me.id);
               setProfile({
                 ...baseProfile,
                 photo_url: me.photo_url || baseProfile.photo_url,
@@ -89,31 +91,98 @@ function AccountPage() {
 
     fetchAccount();
   }, [navigate]);
-  // State untuk mode edit (simulasi)
-  const [isEditing, setIsEditing] = useState(null); // null, 'name', 'phone', atau 'email'
-  const [tempValue, setTempValue] = useState("");
+  // State untuk mode edit global
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editedProfile, setEditedProfile] = useState({ ...profile });
 
-  const handleEditClick = (field) => {
-    setIsEditing(field);
-    setTempValue(profile[field]); // Isi nilai sementara dengan nilai saat ini
+  useEffect(() => {
+    setEditedProfile({ ...profile });
+  }, [profile]);
+
+  const handleFieldChange = (field, value) => {
+    setEditedProfile({ ...editedProfile, [field]: value });
   };
 
-  const handleSaveEdit = (field) => {
-    if (tempValue.trim() === "") {
+  const handleSaveAll = async () => {
+    // Validate semua field tidak kosong
+    if (
+      !editedProfile.name?.trim() ||
+      !editedProfile.phone?.trim() ||
+      !editedProfile.email?.trim()
+    ) {
       showAlert({
         title: "Validation Error",
-        message: "Nilai tidak boleh kosong!",
+        message: "Semua field wajib diisi!",
         type: "warning",
         confirmText: "OK",
       });
       return;
     }
-    setProfile({ ...profile, [field]: tempValue });
-    setIsEditing(null);
+
+    try {
+      const token = localStorage.getItem("token");
+
+      // Jika ada perubahan foto dan user adalah walker, update foto ke backend
+      if (
+        profile.role === "walker" &&
+        walkerId &&
+        editedProfile.photo_url &&
+        editedProfile.photo_url !== profile.photo_url
+      ) {
+        const formData = new FormData();
+
+        // Convert data URL to Blob jika dari file picker
+        if (editedProfile.photo_url.startsWith("data:")) {
+          const response = await fetch(editedProfile.photo_url);
+          const blob = await response.blob();
+          formData.append("photo", blob, "profile.jpg");
+        }
+
+        console.log("🔍 Uploading photo untuk walker ID:", walkerId);
+        console.log("📸 FormData entries:", Array.from(formData.entries()));
+
+        // Update walker photo
+        const updateRes = await api.put(`/api/walkers/${walkerId}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log("✅ Photo update response:", updateRes.data);
+      }
+
+      setProfile(editedProfile);
+      setIsEditMode(false);
+      showAlert({
+        title: "Success",
+        message: "Profil berhasil diperbarui!",
+        type: "success",
+        confirmText: "OK",
+      });
+    } catch (err) {
+      console.error("❌ Error saving profile:", err);
+      console.error("📝 Response data:", err.response?.data);
+      showAlert({
+        title: "Error",
+        message: `Gagal menyimpan profil: ${
+          err.response?.data?.message || err.message
+        }`,
+        type: "error",
+        confirmText: "OK",
+      });
+    }
+  };
+
+  const handleCancel = () => {
+    setEditedProfile({ ...profile });
+    setIsEditMode(false);
+  };
+
+  const handlePhotoChange = (e) => {
     showAlert({
-      title: "Success",
-      message: `Detail ${field} berhasil diubah!`,
-      type: "success",
+      title: "Coming Soon",
+      message: "Fitur upload foto akan segera tersedia.",
+      type: "info",
       confirmText: "OK",
     });
   };
@@ -121,35 +190,21 @@ function AccountPage() {
   const renderDetailRow = (label, field) => (
     <div className="detail-row-account">
       <label>{label}</label>
-      {isEditing === field ? (
-        <>
-          <input
-            type={field === "email" ? "email" : "text"}
-            value={tempValue}
-            onChange={(e) => setTempValue(e.target.value)}
-            style={{
-              flex: 1,
-              padding: "5px",
-              borderRadius: "5px",
-              border: "none",
-              color: "#4A69BB",
-            }}
-          />
-          <span
-            className="edit-icon"
-            onClick={() => handleSaveEdit(field)}
-            style={{ color: "#A3D8A5", cursor: "pointer" }}
-          >
-            ✓
-          </span>
-        </>
+      {isEditMode ? (
+        <input
+          type={field === "email" ? "email" : "text"}
+          value={editedProfile[field]}
+          onChange={(e) => handleFieldChange(field, e.target.value)}
+          style={{
+            flex: 1,
+            padding: "5px",
+            borderRadius: "5px",
+            border: "1px solid #8FABD4",
+            color: "#4A70A9",
+          }}
+        />
       ) : (
-        <>
-          <span>{profile[field]}</span>
-          <span className="edit-icon" onClick={() => handleEditClick(field)}>
-            ✎
-          </span>
-        </>
+        <span>{profile[field]}</span>
       )}
     </div>
   );
@@ -167,23 +222,112 @@ function AccountPage() {
           {/* KIRI: Foto Profil */}
           <div className="profile-photo-container">
             <img
-              src={profile.photo_url || christellaProfile}
+              src={
+                isEditMode
+                  ? editedProfile.photo_url || christellaProfile
+                  : profile.photo_url || christellaProfile
+              }
               alt={profile.name}
             />
-            <button className="edit-photo-btn">edit ✎</button>
+            {isEditMode && (
+              <>
+                <input
+                  type="file"
+                  id="photo-input"
+                  style={{ display: "none" }}
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                />
+                <button
+                  onClick={() =>
+                    document.getElementById("photo-input")?.click()
+                  }
+                  style={{
+                    marginTop: "10px",
+                    padding: "10px 20px",
+                    backgroundColor: "white",
+                    color: "#4A70A9",
+                    border: "2px solid #4A70A9",
+                    borderRadius: "8px",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                >
+                  Ganti Foto
+                </button>
+              </>
+            )}
           </div>
 
           {/* KANAN: Detail Akun */}
           <div className="profile-details">
-            {renderDetailRow("Name", "name")}
-            {renderDetailRow("Phone Number", "phone")}
-            {renderDetailRow("Email", "email")}
-            {profile.role === "walker" && (
-              <>
-                {renderDetailRow("Location", "location_name")}
-                {renderDetailRow("Fee / Hour", "hourly_rate")}
-                {renderDetailRow("Bio", "bio")}
-              </>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                marginBottom: "20px",
+              }}
+            >
+              <div style={{ flex: 1 }}>
+                {renderDetailRow("Name", "name")}
+                {renderDetailRow("Phone Number", "phone")}
+                {renderDetailRow("Email", "email")}
+                {profile.role === "walker" && (
+                  <>
+                    {renderDetailRow("Location", "location_name")}
+                    {renderDetailRow("Fee / Hour", "hourly_rate")}
+                    {renderDetailRow("Bio", "bio")}
+                  </>
+                )}
+              </div>
+
+              {/* Icon Pencil di Ujung */}
+              <button
+                onClick={() => setIsEditMode(!isEditMode)}
+                className="edit-profile-icon-btn"
+              >
+                ✎
+              </button>
+            </div>
+
+            {/* Save/Cancel Buttons saat Edit Mode */}
+            {isEditMode && (
+              <div
+                style={{ display: "flex", gap: "10px", marginBottom: "15px" }}
+              >
+                <button
+                  onClick={handleSaveAll}
+                  style={{
+                    flex: 1,
+                    padding: "10px",
+                    backgroundColor: "#4CAF50",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "8px",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                  }}
+                >
+                  Save Changes
+                </button>
+                <button
+                  onClick={handleCancel}
+                  style={{
+                    flex: 1,
+                    padding: "10px",
+                    backgroundColor: "#f44336",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "8px",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
             )}
 
             {/* Tambahkan tombol jika Walker */}
@@ -191,8 +335,8 @@ function AccountPage() {
               <button
                 style={{
                   padding: "10px 20px",
-                  backgroundColor: "#FFD700",
-                  color: "#4A69BB",
+                  backgroundColor: "white",
+                  color: "#4A70A9",
                   border: "none",
                   borderRadius: "8px",
                   fontWeight: "700",
@@ -200,7 +344,7 @@ function AccountPage() {
                 }}
                 onClick={() => navigate("/setup/confirm")}
               >
-                Cek Konfirmasi Booking
+                Cek Orderan
               </button>
             )}
           </div>

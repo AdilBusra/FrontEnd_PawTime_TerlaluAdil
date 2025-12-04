@@ -1,6 +1,16 @@
 /* src/App.css */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
 
+/* Keyframe untuk animasi berputar */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Aturan Global */
 html,
 body {
@@ -50,7 +60,7 @@ body {
 .logo-section a {
   text-decoration: none;
   font-size: 30px;
-  font-weight: bold;
+  font-weight: 700;
   color: white;
   display: flex;
   align-items: center;
@@ -277,7 +287,7 @@ body {
 }
 .walker-image {
   width: 100%;
-  max-height: 250px;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 30px;
   margin-bottom: 15px;
@@ -458,7 +468,7 @@ body {
 }
 .detail-image {
   width: 100%;
-  height: 240px;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 30px;
   margin-bottom: 15px;
@@ -1610,4 +1620,27 @@ body {
   .history-action-btn {
     width: 100%;
   }
+}
+
+/* Edit Icon Button Style */
+.edit-profile-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #4a70a9;
+  cursor: pointer;
+  font-size: 24px;
+  color: #4a70a9;
+  transition: all 0.3s ease;
+  padding: 0;
+  margin-left: 15px;
+}
+
+.edit-profile-icon-btn:hover {
+  box-shadow: 0 4px 12px rgba(74, 112, 169, 0.3);
+  transform: scale(1.1);
 }
