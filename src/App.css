@@ -30,6 +30,9 @@ body {
 .main-header-container {
   padding: 20px;
   background-color: #efece3;
+  position: relative;
+  z-index: 100;
+  overflow: visible;
 }
 .navbar-content {
   background-color: #8fabd4; /* Biru Pucat */
@@ -42,6 +45,93 @@ body {
   color: white;
   max-width: 1500px;
   margin: 20px auto;
+  position: relative;
+  overflow: visible;
+}
+
+/* Burger Menu Button */
+.burger-menu-btn {
+  display: none;
+  flex-direction: column;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  z-index: 102;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .burger-menu-btn {
+    display: flex !important;
+    margin-left: auto;
+  }
+}
+
+.burger-line {
+  width: 28px;
+  height: 3px;
+  background-color: white;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+/* Mobile Responsive - Show burger menu */
+@media (max-width: 768px) {
+  .main-header-container {
+    padding: 15px;
+    position: relative;
+    z-index: 100;
+  }
+
+  .navbar-content {
+    padding: 15px 20px;
+    border-radius: 30px;
+    flex-wrap: nowrap;
+    min-height: 60px;
+    position: relative;
+    z-index: 101;
+  }
+
+  .logo-section a {
+    font-size: 24px;
+  }
+
+  .logo-icon {
+    font-size: 22px;
+  }
+
+  .nav-link {
+    padding: 15px 20px;
+    font-size: 16px;
+    display: block;
+    color: white;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    pointer-events: auto;
+  }
+
+  .nav-link:last-child {
+    border-bottom: none;
+  }
+
+  .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+  }
+
+  .nav-link:active {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .separator {
+    display: none !important;
+  }
 }
 
 .navbar-container {
@@ -73,7 +163,38 @@ body {
   font-size: 20px;
   font-weight: 500;
   margin-right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
+
+/* Mobile: Override action-nav display */
+@media (max-width: 768px) {
+  .action-nav {
+    display: none !important;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #7394c1;
+    flex-direction: column;
+    padding: 0;
+    border-radius: 30px;
+    margin-top: 10px;
+    margin-right: 0;
+    padding-top: 10px;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.15);
+    gap: 0;
+    width: 100%;
+    z-index: 1000;
+    pointer-events: auto;
+  }
+
+  .action-nav.mobile-open {
+    display: flex !important;
+  }
+}
+
 .nav-link {
   color: white;
   text-decoration: none;
@@ -1088,6 +1209,8 @@ body {
 .account-page-main {
   text-align: center;
   padding: 60px 50px;
+  background-color: #efece3;
+  min-height: 100vh;
 }
 .profile-heading {
   font-size: 48px;
@@ -1109,6 +1232,7 @@ body {
 }
 .profile-photo-container {
   text-align: center;
+  flex-shrink: 0;
 }
 .profile-photo-container img {
   width: 150px;
@@ -1130,6 +1254,7 @@ body {
 .profile-details {
   flex: 1;
   text-align: left;
+  position: relative;
 }
 .detail-row-account {
   display: flex;
@@ -1147,11 +1272,156 @@ body {
   flex: 1;
   font-size: 16px;
 }
+.detail-row-account input {
+  flex: 1;
+  font-size: 16px;
+}
 .edit-icon {
   font-size: 20px;
   color: #ffd700; /* Emas */
   margin-left: 10px;
   cursor: pointer;
+}
+
+/* Mobile Responsive - Profile Page */
+@media (max-width: 768px) {
+  .account-page-main {
+    padding: 20px 15px;
+  }
+
+  .profile-heading {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .profile-card {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    position: relative;
+    max-width: 100%;
+    align-items: stretch;
+  }
+
+  .profile-photo-container {
+    width: 100%;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile-photo-container img {
+    width: 100px;
+    height: 100px;
+    border: 4px solid white;
+    margin-bottom: 8px;
+  }
+
+  .profile-details {
+    width: 100%;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .detail-row-account {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .detail-row-account:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .detail-row-account label {
+    font-size: 12px;
+    font-weight: 700;
+    min-width: auto;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: rgba(255, 255, 255, 0.9);
+    display: block;
+    width: 100%;
+  }
+
+  .detail-row-account span {
+    font-size: 14px;
+    width: 100%;
+    color: white;
+    word-break: break-word;
+  }
+
+  .detail-row-account input {
+    font-size: 14px;
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-family: inherit;
+    box-sizing: border-box;
+  }
+
+  .detail-row-account input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .detail-row-account input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .edit-profile-icon-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .profile-action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 15px;
+    margin-bottom: 0;
+  }
+
+  .profile-btn-save,
+  .profile-btn-cancel {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .profile-walker-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  .profile-walker-btn {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
 }
 
 /* --- ACCOUNT PAGE / DASHBOARD STYLES --- */
@@ -1643,6 +1913,98 @@ body {
 .edit-profile-icon-btn:hover {
   box-shadow: 0 4px 12px rgba(74, 112, 169, 0.3);
   transform: scale(1.1);
+}
+
+/* Profile Action Buttons */
+.profile-action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  margin-top: 20px;
+}
+
+.profile-btn-save,
+.profile-btn-cancel {
+  flex: 1;
+  padding: 12px 20px;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.profile-btn-save {
+  background-color: #4CAF50;
+}
+
+.profile-btn-save:hover {
+  background-color: #45a049;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.profile-btn-cancel {
+  background-color: #f44336;
+}
+
+.profile-btn-cancel:hover {
+  background-color: #da190b;
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+}
+
+/* Profile Walker Buttons */
+.profile-walker-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.profile-walker-btn {
+  flex: 1;
+  padding: 12px 20px;
+  background-color: white;
+  color: #4A70A9;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(74, 112, 169, 0.15);
+}
+
+.profile-walker-btn:hover {
+  background-color: #f5f5f5;
+  box-shadow: 0 4px 12px rgba(74, 112, 169, 0.25);
+  transform: translateY(-1px);
+}
+
+.profile-walker-btn i {
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .profile-walker-buttons {
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .profile-walker-btn {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
 }
 
 /* --- WALKER ACTIVE BOOKINGS PAGE STYLES --- */

@@ -308,106 +308,58 @@ function AccountPage() {
 
           {/* KANAN: Detail Akun */}
           <div className="profile-details">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-                marginBottom: "20px",
-              }}
-            >
-              <div style={{ flex: 1 }}>
-                {renderDetailRow("Name", "name")}
-                {renderDetailRow("Phone Number", "phone")}
-                {renderDetailRow("Email", "email")}
-                {profile.role === "walker" && (
-                  <>
-                    {renderDetailRow("Location", "location_name")}
-                    {renderDetailRow("Fee / Hour", "hourly_rate")}
-                    {renderDetailRow("Bio", "bio")}
-                  </>
-                )}
-              </div>
+            {renderDetailRow("Name", "name")}
+            {renderDetailRow("Phone Number", "phone")}
+            {renderDetailRow("Email", "email")}
+            {profile.role === "walker" && (
+              <>
+                {renderDetailRow("Location", "location_name")}
+                {renderDetailRow("Fee / Hour", "hourly_rate")}
+                {renderDetailRow("Bio", "bio")}
+              </>
+            )}
 
-              {/* Icon Pencil di Ujung */}
-              <button
-                onClick={() => setIsEditMode(!isEditMode)}
-                className="edit-profile-icon-btn"
-              >
-                ✎
-              </button>
-            </div>
+            {/* Icon Pencil - Responsive */}
+            <button
+              onClick={() => setIsEditMode(!isEditMode)}
+              className="edit-profile-icon-btn"
+              title={isEditMode ? "Cancel Edit" : "Edit Profile"}
+            >
+              {isEditMode ? "✕" : "✎"}
+            </button>
 
             {/* Save/Cancel Buttons saat Edit Mode */}
             {isEditMode && (
-              <div
-                style={{ display: "flex", gap: "10px", marginBottom: "15px" }}
-              >
+              <div className="profile-action-buttons">
                 <button
                   onClick={handleSaveAll}
-                  style={{
-                    flex: 1,
-                    padding: "10px",
-                    backgroundColor: "#4CAF50",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                  }}
+                  className="profile-btn-save"
                 >
-                  Save Changes
+                  <i className="fas fa-check"></i> Save Changes
                 </button>
                 <button
                   onClick={handleCancel}
-                  style={{
-                    flex: 1,
-                    padding: "10px",
-                    backgroundColor: "#f44336",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                  }}
+                  className="profile-btn-cancel"
                 >
-                  Cancel
+                  <i className="fas fa-times"></i> Cancel
                 </button>
               </div>
             )}
 
             {/* Tambahkan tombol jika Walker */}
             {profile.role === "walker" && (
-              <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+              <div className="profile-walker-buttons">
                 <button
-                  style={{
-                    flex: 1,
-                    padding: "10px 20px",
-                    backgroundColor: "white",
-                    color: "#4A70A9",
-                    border: "none",
-                    borderRadius: "8px",
-                    fontWeight: "700",
-                    cursor: "pointer",
-                  }}
+                  className="profile-walker-btn"
                   onClick={() => navigate("/setup/confirm")}
                 >
-                  Cek Orderan
+                  <i className="fas fa-list-check"></i> Cek Orderan
                 </button>
                 <button
-                  style={{
-                    flex: 1,
-                    padding: "10px 20px",
-                    backgroundColor: "white",
-                    color: "#4A70A9",
-                    border: "none",
-                    borderRadius: "8px",
-                    fontWeight: "700",
-                    cursor: "pointer",
-                  }}
+                  className="profile-walker-btn"
                   onClick={() => navigate("/walker/active")}
                 >
-                  Active Bookings
+                  <i className="fas fa-clock"></i> Active Bookings
                 </button>
               </div>
             )}
