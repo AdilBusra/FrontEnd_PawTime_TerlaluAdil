@@ -17,6 +17,7 @@ import QrPage from "./pages/QrPage";
 import RatingPage from "./pages/RatingPage";
 import WalkerSetupPage from "./pages/WalkerSetupPage";
 import WalkerConfirmationPage from "./pages/WalkerConfirmationPage";
+import WalkerActiveBookingsPage from "./pages/WalkerActiveBookingsPage";
 import AccountPage from "./pages/AccountPage";
 import PetOwnerPage from "./pages/PetOwnerPage";
 import TrackingPage from "./pages/TrackingPage"; // Live Tracking dengan Maps
@@ -181,6 +182,15 @@ function App() {
           element={
             <ProtectedRoute requireRole="walker">
               <WalkerConfirmationPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/walker/active"
+          element={
+            <ProtectedRoute requireRole="walker">
+              <WalkerActiveBookingsPage />
             </ProtectedRoute>
           }
         />

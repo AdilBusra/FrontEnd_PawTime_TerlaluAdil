@@ -378,20 +378,38 @@ function AccountPage() {
 
             {/* Tambahkan tombol jika Walker */}
             {profile.role === "walker" && (
-              <button
-                style={{
-                  padding: "10px 20px",
-                  backgroundColor: "white",
-                  color: "#4A70A9",
-                  border: "none",
-                  borderRadius: "8px",
-                  fontWeight: "700",
-                  marginTop: "20px",
-                }}
-                onClick={() => navigate("/setup/confirm")}
-              >
-                Cek Orderan
-              </button>
+              <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+                <button
+                  style={{
+                    flex: 1,
+                    padding: "10px 20px",
+                    backgroundColor: "white",
+                    color: "#4A70A9",
+                    border: "none",
+                    borderRadius: "8px",
+                    fontWeight: "700",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => navigate("/setup/confirm")}
+                >
+                  Cek Orderan
+                </button>
+                <button
+                  style={{
+                    flex: 1,
+                    padding: "10px 20px",
+                    backgroundColor: "white",
+                    color: "#4A70A9",
+                    border: "none",
+                    borderRadius: "8px",
+                    fontWeight: "700",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => navigate("/walker/active")}
+                >
+                  Active Bookings
+                </button>
+              </div>
             )}
           </div>
         </div>
