@@ -123,11 +123,11 @@ function TrackingPage() {
             setStatus("Gagal terhubung ke server. Cek koneksi internet.");
         });
 
-        // Listen for location updates (owner)
-        newSocket.on('live_location', (data) => {
-            console.log("📍 Lokasi Diterima:", data);
+        // Listen for walker position updates (real-time from walker)
+        newSocket.on('walker_position', (data) => {
+            console.log("📍 Walker position received:", data);
             
-            if (data.latitude && data.longitude) {
+            if (data.latitude !== undefined && data.longitude !== undefined) {
                 const newPosition = [data.latitude, data.longitude];
                 setPosition(newPosition);
                 setStatus(`${walkerName} sedang bergerak 🏃`);
@@ -135,22 +135,8 @@ function TrackingPage() {
                 
                 // Log jika ini lokasi pertama
                 if (!hasInitialZoom) {
-                    console.log("🎯 Preparing to auto-zoom to Walker location");
+                    console.log("🎯 Auto-zoom to Walker location");
                 }
-            }
-        });
-
-        // Optional: also support snake_case event name if backend emits it
-        newSocket.on('update_location', (data) => {
-            console.log("📍 Lokasi (snake_case) Diterima:", data);
-            const lat = data.latitude;
-            const lng = data.longitude;
-            if (lat != null && lng != null) {
-                const newPosition = [lat, lng];
-                setPosition(newPosition);
-                setStatus(`${walkerName} sedang bergerak 🏃`);
-                setLastUpdate(new Date(data.timestamp || Date.now()));
-                if (!hasInitialZoom) console.log("🎯 Preparing to auto-zoom to Walker location (snake_case)");
             }
         });
 

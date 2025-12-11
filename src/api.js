@@ -22,16 +22,36 @@ api.interceptors.request.use(
   (config) => {
     try {
       const token = localStorage.getItem("token");
+      console.log("🔐 Token in request:", token ? `${token.substring(0, 20)}...` : "❌ NO TOKEN");
       if (token) {
         config.headers = config.headers || {};
         config.headers.Authorization = `Bearer ${token}`;
+        console.log("✅ Authorization header set:", config.headers.Authorization.substring(0, 30) + "...");
+      } else {
+        console.warn("⚠️ No token found in localStorage. User may not be logged in.");
       }
     } catch (err) {
-      // localStorage may throw in some edge environments; ignore silently
+      console.error("❌ Error setting authorization header:", err);
     }
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+// Response interceptor untuk handle 401
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      console.error("❌ 401 Unauthorized - Token may be expired or invalid");
+      // Clear invalid token
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      // Optional: redirect to login
+      // window.location.href = "/auth";
+    }
+    return Promise.reject(error);
+  }
 );
 
 export default api;

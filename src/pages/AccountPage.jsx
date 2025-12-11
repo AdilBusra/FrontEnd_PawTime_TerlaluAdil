@@ -151,6 +151,41 @@ function AccountPage() {
         console.log("✅ Photo update response:", updateRes.data);
       }
 
+      // Update user profile ke backend (PUT /api/users/me)
+      console.log("📝 Updating user profile to backend:", {
+        name: editedProfile.name,
+        phone_number: editedProfile.phone,
+        email: editedProfile.email
+      });
+      console.log("🔐 Token available:", !!token);
+      console.log("🔐 Token preview:", token?.substring(0, 20) + "...");
+
+      const updateUserRes = await api.put("/api/users/me", {
+        name: editedProfile.name,
+        phone_number: editedProfile.phone,
+        email: editedProfile.email,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+
+      console.log("✅ Backend update response:", updateUserRes.data);
+      console.log("📋 Response status:", updateUserRes.status);
+
+      // Update localStorage dengan data terbaru dari backend
+      const updatedUserFromBackend = updateUserRes.data?.data || updateUserRes.data?.user;
+      if (updatedUserFromBackend) {
+        const userRaw = localStorage.getItem("user");
+        const user = userRaw ? JSON.parse(userRaw) : {};
+        const updatedUser = {
+          ...user,
+          ...updatedUserFromBackend,
+        };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        console.log("✅ Updated localStorage with backend data:", updatedUser);
+      }
+
       setProfile(editedProfile);
       setIsEditMode(false);
       showAlert({
@@ -160,13 +195,24 @@ function AccountPage() {
         confirmText: "OK",
       });
     } catch (err) {
-      console.error("❌ Error saving profile:", err);
-      console.error("📝 Response data:", err.response?.data);
+      console.error("❌ Error saving profile:", err.message);
+      console.error("📝 Full error:", err);
+      console.error("🔍 Response status:", err.response?.status);
+      console.error("🔍 Response data:", err.response?.data);
+      console.error("🔍 Request config:", {
+        url: err.config?.url,
+        method: err.config?.method,
+        headers: err.config?.headers
+      });
+
+      const errorMessage = err.response?.data?.message || 
+                          err.response?.data?.error || 
+                          err.message || 
+                          "Gagal menyimpan profil";
+
       showAlert({
         title: "Error",
-        message: `Gagal menyimpan profil: ${
-          err.response?.data?.message || err.message
-        }`,
+        message: `Gagal menyimpan profil: ${errorMessage}`,
         type: "error",
         confirmText: "OK",
       });

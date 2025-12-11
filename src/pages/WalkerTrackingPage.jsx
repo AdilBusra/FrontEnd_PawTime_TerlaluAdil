@@ -146,7 +146,8 @@ function WalkerTrackingPage() {
                     : true; // if no lastPos, treat as moved
                 if (now - lastSentAtRef.current >= 30000 && movedEnough) {
                     if (socketRef.current && socketRef.current.connected) {
-                        socketRef.current.emit('live_location', locationData);
+                        socketRef.current.emit('walker_position', locationData);
+                        console.log('🎯 Emitted walker_position:', locationData);
                         lastSentAtRef.current = now;
                         lastPositionRef.current = { latitude: locationData.latitude, longitude: locationData.longitude };
                     }
@@ -198,10 +199,10 @@ function WalkerTrackingPage() {
             if (!movedEnough) {
                 return;
             }
-            socketRef.current.emit('live_location', currentPosition);
+            socketRef.current.emit('walker_position', currentPosition);
+            console.log('⏱️ Periodic emit (30s) - walker_position:', currentPosition);
             lastSentAtRef.current = Date.now();
             lastPositionRef.current = { latitude: currentPosition.latitude, longitude: currentPosition.longitude };
-            console.log('⏱️ Periodic emit (30s):', currentPosition);
         }, 30000);
 
         setIsTracking(true);
