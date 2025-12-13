@@ -1230,9 +1230,16 @@ body {
   align-items: center;
   color: white;
 }
+/* Make card a positioning context so absolute children (edit button) align to its corners */
+.profile-card {
+  position: relative;
+}
 .profile-photo-container {
   text-align: center;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .profile-photo-container img {
   width: 150px;
@@ -1241,6 +1248,23 @@ body {
   object-fit: cover;
   border: 5px solid white;
   margin-bottom: 10px;
+}
+/* Photo button (Ganti Foto) - centered under the photo */
+.ganti-foto-btn {
+  display: inline-block;
+  margin: 8px auto 0 auto;
+  padding: 8px 14px;
+  background: white;
+  color: #4A70A9;
+  border: 2px solid #4A70A9;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+}
+
+.ganti-foto-btn:hover {
+  background: #f5f7fb;
 }
 .edit-photo-btn {
   background: none;
@@ -1254,7 +1278,14 @@ body {
 .profile-details {
   flex: 1;
   text-align: left;
-  position: relative;
+}
+
+/* Prevent the edit (X) button from overlapping input fields on desktop by adding right padding
+   This reserves space for the absolute-positioned button inside .profile-card. */
+@media (min-width: 769px) {
+  .profile-details {
+    padding-right: 80px;
+  }
 }
 .detail-row-account {
   display: flex;
@@ -1275,6 +1306,18 @@ body {
 .detail-row-account input {
   flex: 1;
   font-size: 16px;
+}
+
+/* Desktop inputs: ensure readable white background and dark text */
+.detail-row-account input[type="text"],
+.detail-row-account input[type="email"],
+.detail-row-account input[type="tel"] {
+  background-color: #ffffff;
+  color: #333333;
+  padding: 8px 10px;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 6px;
+  box-sizing: border-box;
 }
 .edit-icon {
   font-size: 20px;
@@ -1364,22 +1407,23 @@ body {
     font-size: 14px;
     width: 100%;
     padding: 8px 10px;
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    border: 1px solid rgba(0,0,0,0.12);
     border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
+    background-color: #ffffff; /* white for readability on blue card */
+    color: #333333;
     font-family: inherit;
     box-sizing: border-box;
   }
 
   .detail-row-account input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(0,0,0,0.45);
   }
 
   .detail-row-account input:focus {
     outline: none;
-    background-color: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.5);
+    background-color: #ffffff;
+    border-color: rgba(0,0,0,0.2);
+    box-shadow: 0 0 0 3px rgba(74,112,169,0.08);
   }
 
   .edit-profile-icon-btn {
@@ -1392,6 +1436,8 @@ body {
     flex-shrink: 0;
     margin: 0;
     padding: 0;
+    z-index: 20;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.18);
   }
 
   .profile-action-buttons {
@@ -1907,7 +1953,10 @@ body {
   color: #4a70a9;
   transition: all 0.3s ease;
   padding: 0;
-  margin-left: 15px;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 30;
 }
 
 .edit-profile-icon-btn:hover {

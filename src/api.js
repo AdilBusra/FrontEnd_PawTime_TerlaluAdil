@@ -22,14 +22,12 @@ api.interceptors.request.use(
   (config) => {
     try {
       const token = localStorage.getItem("token");
-      console.log("🔐 Token in request:", token ? `${token.substring(0, 20)}...` : "❌ NO TOKEN");
       if (token) {
         config.headers = config.headers || {};
         config.headers.Authorization = `Bearer ${token}`;
-        console.log("✅ Authorization header set:", config.headers.Authorization.substring(0, 30) + "...");
-      } else {
-        console.warn("⚠️ No token found in localStorage. User may not be logged in.");
+        console.log("✅ Authorization header set with token");
       }
+      // Don't warn if no token; it's expected when not logged in
     } catch (err) {
       console.error("❌ Error setting authorization header:", err);
     }
