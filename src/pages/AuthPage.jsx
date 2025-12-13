@@ -77,7 +77,7 @@ function AuthPage({ setLoggedInUserRole, userRole }) {
         // Registration logic with API
         const registerRes = await api.post("/api/auth/register", {
           name: registerForm.name,
-          phone: registerForm.number,
+          phone_number: registerForm.number, // Backend expects phone_number
           email: registerForm.email,
           password: registerForm.password,
           role: registerForm.role,

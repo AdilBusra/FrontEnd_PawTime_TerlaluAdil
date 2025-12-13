@@ -1,8 +1,9 @@
 // src/App.jsx
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom"; // <-- IMPORT BARU
 import "./App.css";
+import api from "./api"; // Import API untuk sync data
 
 // Import semua halaman yang sebelumnya ada di Router.jsx
 import LandingPage from "./pages/LandingPage";
@@ -16,6 +17,7 @@ import QrPage from "./pages/QrPage";
 import RatingPage from "./pages/RatingPage";
 import WalkerSetupPage from "./pages/WalkerSetupPage";
 import WalkerConfirmationPage from "./pages/WalkerConfirmationPage";
+import WalkerActiveBookingsPage from "./pages/WalkerActiveBookingsPage";
 import AccountPage from "./pages/AccountPage";
 import PetOwnerPage from "./pages/PetOwnerPage";
 import TrackingPage from "./pages/TrackingPage"; // Live Tracking dengan Maps
@@ -23,6 +25,43 @@ import WalkerTrackingPage from "./pages/WalkerTrackingPage"; // Walker Tracking 
 import ProtectedRoute from "./components/ProtectedRoute"; // Protected Route Component
 
 function App() {
+  // Sync user data dari database saat app startup
+  useEffect(() => {
+    const syncUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const userRaw = localStorage.getItem("user");
+
+        // Hanya sync jika user sudah login
+        if (token && userRaw) {
+          console.log("🔄 Syncing user data from database on app startup...");
+
+          // Fetch latest user data dari backend
+          const response = await api.get("/api/users/me");
+          const latestUserData = response?.data?.data;
+
+          if (latestUserData) {
+            // Update localStorage dengan data terbaru dari database
+            const currentUser = JSON.parse(userRaw);
+            const updatedUser = {
+              ...currentUser,
+              ...latestUserData, // Merge dengan data terbaru dari DB
+            };
+
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+            console.log("✅ User data synced with database:", updatedUser);
+          }
+        }
+      } catch (error) {
+        // Jika sync gagal, gunakan data dari localStorage
+        console.warn("⚠️ Failed to sync user data from database:", error);
+        console.log("💾 Using cached data from localStorage");
+      }
+    };
+
+    // Call sync function saat app mount
+    syncUserData();
+  }, []);
   return (
     <div className="app-container">
       {/* Container untuk semua Route */}
@@ -143,6 +182,15 @@ function App() {
           element={
             <ProtectedRoute requireRole="walker">
               <WalkerConfirmationPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/walker/active"
+          element={
+            <ProtectedRoute requireRole="walker">
+              <WalkerActiveBookingsPage />
             </ProtectedRoute>
           }
         />

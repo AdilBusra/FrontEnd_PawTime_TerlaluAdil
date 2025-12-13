@@ -35,12 +35,9 @@ function HistoryPage({ userRole: propUserRole }) {
         setError(null);
 
         // Tentukan endpoint berdasarkan role user
+        // Backend menggunakan endpoint yang sama untuk owner dan walker
+        // Backend akan otomatis filter berdasarkan user_id dan role dari JWT token
         let endpoint = "/api/bookings/history";
-        if (userRole === "walker") {
-          endpoint = "/api/walker/orders"; // Orders yang diterima walker
-        } else if (userRole === "owner") {
-          endpoint = "/api/bookings/history"; // Booking history pet owner
-        }
 
         const response = await api.get(endpoint);
 
@@ -115,12 +112,13 @@ function HistoryPage({ userRole: propUserRole }) {
 
   const getStatusBadge = (status) => {
     const statusMap = {
-      completed: "✓ Completed",
-      cancelled: "✗ Cancelled",
-      pending: "⏳ Pending",
-      in_progress: "🔄 In Progress",
+      completed: { icon: "fa-check-circle", text: "Completed" },
+      cancelled: { icon: "fa-times-circle", text: "Cancelled" },
+      pending: { icon: "fa-clock", text: "Pending" },
+      in_progress: { icon: "fa-spinner fa-spin", text: "In Progress" },
     };
-    return statusMap[status?.toLowerCase()] || status;
+    const badge = statusMap[status?.toLowerCase()] || { icon: "fa-info-circle", text: status };
+    return badge;
   };
 
   return (
@@ -129,7 +127,8 @@ function HistoryPage({ userRole: propUserRole }) {
 
       <div className="history-main">
         <h2 className="history-title">
-          {userRole === "walker" ? "📋 My Orders" : "📋 Booking History"}
+          <i className={`fas ${userRole === "walker" ? "fa-list" : "fa-history"}`}></i>
+          {userRole === "walker" ? "My Orders" : "Booking History"}
         </h2>
 
         {/* Filter Buttons */}
@@ -138,7 +137,7 @@ function HistoryPage({ userRole: propUserRole }) {
             className={`filter-btn ${filterStatus === "all" ? "active" : ""}`}
             onClick={() => setFilterStatus("all")}
           >
-            All
+            <i className="fas fa-th-large"></i> All
           </button>
           <button
             className={`filter-btn ${
@@ -146,7 +145,7 @@ function HistoryPage({ userRole: propUserRole }) {
             }`}
             onClick={() => setFilterStatus("completed")}
           >
-            Completed
+            <i className="fas fa-check-circle"></i> Completed
           </button>
           <button
             className={`filter-btn ${
@@ -154,20 +153,26 @@ function HistoryPage({ userRole: propUserRole }) {
             }`}
             onClick={() => setFilterStatus("cancelled")}
           >
-            Cancelled
+            <i className="fas fa-times-circle"></i> Cancelled
           </button>
         </div>
 
-        {loading && <p className="loading-message">⏳ Loading history...</p>}
+        {loading && (
+          <p className="loading-message">
+            <i className="fas fa-spinner fa-spin"></i> Loading history...
+          </p>
+        )}
 
         {error && (
           <div className="error-message-box">
-            <p className="error-message">⚠️ {error}</p>
+            <p className="error-message">
+              <i className="fas fa-exclamation-triangle"></i> {error}
+            </p>
             <button
               className="retry-button"
               onClick={() => window.location.reload()}
             >
-              🔄 Retry
+              <i className="fas fa-redo"></i> Retry
             </button>
           </div>
         )}
@@ -175,51 +180,61 @@ function HistoryPage({ userRole: propUserRole }) {
         {/* History List */}
         <div className="history-list">
           {!loading && !error && filteredData.length > 0
-            ? filteredData.map((item) => (
-                <div key={item.id} className="history-card">
-                  <div className="history-card-header">
-                    <div className="history-info">
-                      <h3 className="history-pet-name">
-                        {userRole === "walker"
-                          ? `${item.pet_name || "Pet"}`
-                          : `${item.walker_name || "Walker"}`}
-                      </h3>
-                      <p className="history-date">
-                        📅{" "}
-                        {new Date(
-                          item.booking_date || item.created_at
-                        ).toLocaleDateString("id-ID")}
-                      </p>
-                    </div>
-                    <div
-                      className="history-status-badge"
-                      style={{ backgroundColor: getStatusColor(item.status) }}
-                    >
-                      {getStatusBadge(item.status)}
-                    </div>
-                  </div>
-
-                  <div className="history-card-body">
-                    <div className="history-detail-row">
-                      <span className="history-label">
-                        {userRole === "walker" ? "👤 Owner:" : "🚶 Walker:"}
-                      </span>
-                      <span className="history-value">
-                        {userRole === "walker"
-                          ? item.owner_name
-                          : item.walker_name}
-                      </span>
+            ? filteredData.map((item) => {
+                const statusBadge = getStatusBadge(item.status);
+                return (
+                  <div key={item.id} className="history-card">
+                    <div className="history-card-header">
+                      <div className="history-info">
+                        <h3 className="history-pet-name">
+                          {userRole === "walker"
+                            ? `${item.pet_name || "Pet"}`
+                            : `${item.walker_name || "Walker"}`}
+                        </h3>
+                        <p className="history-date">
+                          <i className="fas fa-calendar-alt"></i>
+                          {new Date(
+                            item.booking_date || item.created_at
+                          ).toLocaleDateString("id-ID")}
+                        </p>
+                      </div>
+                      <div
+                        className="history-status-badge"
+                        style={{ backgroundColor: getStatusColor(item.status) }}
+                      >
+                        <i className={`fas ${statusBadge.icon}`}></i>
+                        {statusBadge.text}
+                      </div>
                     </div>
 
-                    <div className="history-detail-row">
-                      <span className="history-label">⏱️ Duration:</span>
-                      <span className="history-value">
-                        {item.duration || item.booking_duration} mins
-                      </span>
-                    </div>
+                    <div className="history-card-body">
+                      <div className="history-detail-row">
+                        <span className="history-label">
+                          <i className={`fas ${userRole === "walker" ? "fa-user" : "fa-person-walking"}`}></i>
+                          {userRole === "walker" ? "Owner:" : "Walker:"}
+                        </span>
+                        <span className="history-value">
+                          {userRole === "walker"
+                            ? item.owner_name
+                            : item.walker_name}
+                        </span>
+                      </div>
 
-                    <div className="history-detail-row">
-                      <span className="history-label">💰 Price:</span>
+                      <div className="history-detail-row">
+                        <span className="history-label">
+                          <i className="fas fa-hourglass-half"></i>
+                          Duration:
+                        </span>
+                        <span className="history-value">
+                          {item.duration || item.booking_duration} mins
+                        </span>
+                      </div>
+
+                      <div className="history-detail-row">
+                        <span className="history-label">
+                          <i className="fas fa-money-bill"></i>
+                          Price:
+                        </span>
                       <span className="history-value history-price">
                         Rp{" "}
                         {(item.total_price || item.price)?.toLocaleString(
@@ -230,14 +245,20 @@ function HistoryPage({ userRole: propUserRole }) {
 
                     {item.notes && (
                       <div className="history-detail-row">
-                        <span className="history-label">📝 Notes:</span>
+                        <span className="history-label">
+                          <i className="fas fa-sticky-note"></i>
+                          Notes:
+                        </span>
                         <span className="history-value">{item.notes}</span>
                       </div>
                     )}
 
                     {item.rating && (
                       <div className="history-detail-row">
-                        <span className="history-label">⭐ Rating:</span>
+                        <span className="history-label">
+                          <i className="fas fa-star"></i>
+                          Rating:
+                        </span>
                         <span className="history-value">
                           {"⭐".repeat(item.rating)} ({item.rating}/5)
                         </span>
@@ -249,23 +270,24 @@ function HistoryPage({ userRole: propUserRole }) {
                     {item.status?.toLowerCase() === "completed" &&
                       !item.rating && (
                         <button className="history-action-btn">
-                          Leave Review
+                          <i className="fas fa-pen"></i> Leave Review
                         </button>
                       )}
                     {item.status?.toLowerCase() === "pending" &&
                       userRole === "walker" && (
                         <>
                           <button className="history-action-btn accept-btn">
-                            Accept
+                            <i className="fas fa-check"></i> Accept
                           </button>
                           <button className="history-action-btn reject-btn">
-                            Reject
+                            <i className="fas fa-times"></i> Reject
                           </button>
                         </>
                       )}
                   </div>
                 </div>
-              ))
+                );
+              })
             : !loading &&
               !error && (
                 <div className="no-history-container">

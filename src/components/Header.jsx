@@ -7,6 +7,7 @@ import AlertModal from "./AlertModal";
 function Header({ userRole }) {
   const navigate = useNavigate(); // <-- Panggil Hook
   const [showLogoutAlert, setShowLogoutAlert] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); // <-- BARU untuk burger menu
 
   // Check if user is logged in
   const isLoggedIn = !!localStorage.getItem("token");
@@ -34,12 +35,16 @@ function Header({ userRole }) {
       const urlPath = targetPage === "walker" ? "/walkers" : `/${targetPage}`;
       navigate(urlPath);
     }
+    
+    // Close menu after navigation
+    setMenuOpen(false);
   };
 
   // Handle Logout
   const handleLogout = (e) => {
     e.preventDefault();
     setShowLogoutAlert(true);
+    setMenuOpen(false); // Close menu
   };
 
   const confirmLogout = () => {
@@ -63,6 +68,7 @@ function Header({ userRole }) {
             onClick={(e) => {
               e.preventDefault();
               navigate("/");
+              setMenuOpen(false);
             }} // Navigasi ke root path
           >
             <span className="logo-text">Paw Time</span>
@@ -70,7 +76,23 @@ function Header({ userRole }) {
           </a>
         </div>
 
-        <nav className="action-nav">
+        {/* Burger Menu Button */}
+        <button 
+          className="burger-menu-btn"
+          onClick={() => {
+            console.log("Burger clicked! menuOpen was:", menuOpen);
+            setMenuOpen(!menuOpen);
+            console.log("menuOpen now:", !menuOpen);
+          }}
+          aria-label="Toggle menu"
+        >
+          <span className="burger-line"></span>
+          <span className="burger-line"></span>
+          <span className="burger-line"></span>
+        </button>
+
+        {/* Desktop Navigation */}
+        <nav className={`action-nav ${menuOpen ? "mobile-open" : ""}`}>
           <a
             href="#"
             className="nav-link"
