@@ -11,20 +11,37 @@ function PetOwnerPage({ userRole }) {
   const { alertState, showAlert, closeAlert } = useAlert();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ownerForm, setOwnerForm] = useState({
-    ownerName: "",
-    phoneNumber: "",
-    address: "",
-    petName: "",
-    petSpecies: "", // Default
-    petAge: "",
-    petNotes: "",
+    owner_address: "",
+    owner_phone: "",
+    pet: {
+      name: "",
+      breed: "", // Mapping dari petSpecies
+      age: "",
+      weight: "", // Baru - untuk pet weight
+      notes: "",
+    },
   });
 
   const handleChange = (e) => {
-    setOwnerForm({
-      ...ownerForm,
-      [e.target.id]: e.target.value,
-    });
+    const { id, value } = e.target;
+    
+    // Handle nested pet properties
+    if (id.startsWith("pet_")) {
+      const petField = id.replace("pet_", "");
+      setOwnerForm((prev) => ({
+        ...prev,
+        pet: {
+          ...prev.pet,
+          [petField]: value,
+        },
+      }));
+    } else {
+      // Handle owner properties (owner_address, owner_phone)
+      setOwnerForm((prev) => ({
+        ...prev,
+        [id]: value,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -33,14 +50,17 @@ function PetOwnerPage({ userRole }) {
     try {
       setIsSubmitting(true);
 
-      // Payload untuk backend
+      // Payload dalam format nested sesuai backend requirement
       const payload = {
-        pet_name: ownerForm.petName,
-        pet_species: ownerForm.petSpecies,
-        pet_age: parseInt(ownerForm.petAge, 10),
-        pet_notes: ownerForm.petNotes,
-        owner_address: ownerForm.address,
-        owner_phone: ownerForm.phoneNumber,
+        owner_address: ownerForm.owner_address,
+        owner_phone: ownerForm.owner_phone,
+        pet: {
+          name: ownerForm.pet.name,
+          breed: ownerForm.pet.breed,
+          age: ownerForm.pet.age ? parseInt(ownerForm.pet.age, 10) : null,
+          weight: ownerForm.pet.weight ? parseInt(ownerForm.pet.weight, 10) : null,
+          notes: ownerForm.pet.notes,
+        },
       };
 
       console.log("Sending pet owner data:", payload);
@@ -93,32 +113,32 @@ function PetOwnerPage({ userRole }) {
           <form onSubmit={handleSubmit} className="owner-setup-form-new">
             <h3>Your Personal Information</h3>
             <div className="owner-input-group-new">
-              <label htmlFor="ownerName">Full Name</label>
+              <label htmlFor="owner_phone">Full Name</label>
               <input
                 type="text"
                 id="ownerName"
-                value={ownerForm.ownerName}
+                placeholder="Your full name"
                 onChange={handleChange}
                 required
               />
             </div>
             <div className="owner-input-group-new">
-              <label htmlFor="phoneNumber">Phone Number</label>
+              <label htmlFor="owner_phone">Phone Number</label>
               <input
                 type="tel"
-                id="phoneNumber"
-                value={ownerForm.phoneNumber}
+                id="owner_phone"
+                value={ownerForm.owner_phone}
                 onChange={handleChange}
                 placeholder="+62 8XX XXXX XXXX"
                 required
               />
             </div>
             <div className="owner-input-group-new">
-              <label htmlFor="address">Address</label>
+              <label htmlFor="owner_address">Address</label>
               <textarea
-                id="address"
+                id="owner_address"
                 rows="3"
-                value={ownerForm.address}
+                value={ownerForm.owner_address}
                 onChange={handleChange}
                 placeholder="Full address with city and postal code"
                 required
@@ -127,46 +147,57 @@ function PetOwnerPage({ userRole }) {
             <hr className="owner-divider-new" />
             <h3>Pet's Detail Information</h3>
             <div className="owner-input-group-new">
-              <label htmlFor="petName">Pet's Name</label>
+              <label htmlFor="pet_name">Pet's Name</label>
               <input
                 type="text"
-                id="petName"
-                value={ownerForm.petName}
+                id="pet_name"
+                value={ownerForm.pet.name}
                 onChange={handleChange}
                 required
               />
             </div>
 
             <div className="owner-input-group-new">
-              <label htmlFor="petSpecies">Type of Pet</label>
+              <label htmlFor="pet_breed">Type of Pet (Breed)</label>
               <input
                 type="text"
-                id="petSpecies"
-                value={ownerForm.petSpecies}
+                id="pet_breed"
+                value={ownerForm.pet.breed}
                 onChange={handleChange}
                 placeholder="Example: Golden Retriever / Scottish Fold"
                 required
               />
             </div>
             <div className="owner-input-group-new">
-              <label htmlFor="petAge">Age (Year)</label>
+              <label htmlFor="pet_age">Age (Year)</label>
               <input
                 type="number"
-                id="petAge"
-                value={ownerForm.petAge}
+                id="pet_age"
+                value={ownerForm.pet.age}
                 onChange={handleChange}
                 min="0"
                 required
               />
             </div>
             <div className="owner-input-group-new">
-              <label htmlFor="petNotes">Important Notes</label>
-              <textarea
-                id="petNotes"
-                rows="4"
-                value={ownerForm.petNotes}
+              <label htmlFor="pet_weight">Weight (kg)</label>
+              <input
+                type="number"
+                id="pet_weight"
+                value={ownerForm.pet.weight}
                 onChange={handleChange}
-                placeholder="Alergi, drugs, or etc."
+                placeholder="Pet weight in kilograms"
+                min="0"
+              />
+            </div>
+            <div className="owner-input-group-new">
+              <label htmlFor="pet_notes">Important Notes</label>
+              <textarea
+                id="pet_notes"
+                rows="4"
+                value={ownerForm.pet.notes}
+                onChange={handleChange}
+                placeholder="Allergies, medications, or special instructions..."
               ></textarea>
             </div>
             <button
