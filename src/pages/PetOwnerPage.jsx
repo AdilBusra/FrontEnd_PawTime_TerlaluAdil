@@ -11,8 +11,8 @@ function PetOwnerPage({ userRole }) {
   const { alertState, showAlert, closeAlert } = useAlert();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ownerForm, setOwnerForm] = useState({
+    owner_name: "",
     owner_address: "",
-    owner_phone: "",
     pet: {
       name: "",
       breed: "", // Mapping dari petSpecies
@@ -52,8 +52,8 @@ function PetOwnerPage({ userRole }) {
 
       // Payload dalam format nested sesuai backend requirement
       const payload = {
+        owner_name: ownerForm.owner_name,
         owner_address: ownerForm.owner_address,
-        owner_phone: ownerForm.owner_phone,
         pet: {
           name: ownerForm.pet.name,
           breed: ownerForm.pet.breed,
@@ -113,23 +113,13 @@ function PetOwnerPage({ userRole }) {
           <form onSubmit={handleSubmit} className="owner-setup-form-new">
             <h3>Your Personal Information</h3>
             <div className="owner-input-group-new">
-              <label htmlFor="owner_phone">Full Name</label>
+              <label htmlFor="owner_name">Full Name</label>
               <input
                 type="text"
-                id="ownerName"
+                id="owner_name"
+                value={ownerForm.owner_name}
+                onChange={handleChange}
                 placeholder="Your full name"
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="owner-input-group-new">
-              <label htmlFor="owner_phone">Phone Number</label>
-              <input
-                type="tel"
-                id="owner_phone"
-                value={ownerForm.owner_phone}
-                onChange={handleChange}
-                placeholder="+62 8XX XXXX XXXX"
                 required
               />
             </div>
