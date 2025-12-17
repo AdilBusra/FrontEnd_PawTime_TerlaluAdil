@@ -661,14 +661,42 @@ body {
 .rating-stars .empty {
   color: #ccc;
 }
+.rating-stars .filled {
+  color: gold;
+}
+
+/* Rating with button layout */
+.rating-with-button {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+.rating-info {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 5px;
+}
+.view-reviews-btn {
+  background-color: #ffd700;
+  color: #4a70a9;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 15px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 5px;
+}
+.view-reviews-btn:hover {
+  background-color: #ffed4e;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
 .book-now-button {
-  background-color: #92a8d1; /* Emas */
-  color: white;
-  font-size: 16px;
-  margin: 20px auto 0;
-  display: block;
-  width: 50%;
-  background-color: #b5c5da; /* Emas */
+  background-color: #b5c5da;
   color: #4a70a9;
   font-size: 20px;
   padding: 12px 30px;
@@ -684,6 +712,175 @@ body {
 .book-now-button:hover {
   background-color: #efece3;
   color: #4a70a9;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+.modal-content {
+  background-color: white;
+  border-radius: 20px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+.review-modal {
+  background-color: #c3d3e8;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  border-bottom: 2px solid #4a70a9;
+  background-color: #4a70a9;
+  color: white;
+  border-radius: 20px 20px 0 0;
+}
+.modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: white;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+.modal-close-btn:hover {
+  transform: scale(1.2);
+}
+.modal-body {
+  padding: 30px;
+}
+.review-stats {
+  background-color: #4a70a9;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  color: white;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.stat-label {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+.stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rating-number {
+  font-size: 16px;
+  font-weight: 600;
+}
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.review-item {
+  background-color: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.review-owner {
+  font-weight: 600;
+  font-size: 16px;
+  color: #4a70a9;
+}
+.review-date {
+  font-size: 12px;
+  color: #666;
+}
+.review-rating {
+  margin-bottom: 10px;
+}
+.review-rating .rating-stars {
+  font-size: 18px;
+}
+.review-text {
+  margin: 0;
+  color: #333;
+  line-height: 1.5;
+  font-size: 14px;
+}
+.loading-text,
+.no-reviews-text {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 16px;
+}
+
+/* Responsive modal */
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 95%;
+    max-height: 90vh;
+  }
+  .modal-header {
+    padding: 15px 20px;
+  }
+  .modal-header h2 {
+    font-size: 20px;
+  }
+  .modal-body {
+    padding: 20px;
+  }
+  .review-stats {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .rating-with-button {
+    align-items: stretch;
+  }
+  .view-reviews-btn {
+    width: 100%;
+  }
 }
 
 /* --- WALKER SETUP PAGE STYLES (HLM 12) --- */
