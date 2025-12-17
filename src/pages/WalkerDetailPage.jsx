@@ -19,6 +19,97 @@ const RatingStars = ({ rating }) => {
   return <div className="rating-stars">{stars}</div>;
 };
 
+// Modal untuk menampilkan reviews
+const ReviewModal = ({ isOpen, onClose, walkerId, walkerName }) => {
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({ average_rating: 0, total_ratings: 0 });
+
+  useEffect(() => {
+    if (isOpen && walkerId) {
+      fetchReviews();
+    }
+  }, [isOpen, walkerId]);
+
+  const fetchReviews = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`/api/ratings/walker/${walkerId}`);
+      console.log('Reviews data:', response.data);
+      
+      if (response.data.success) {
+        setReviews(response.data.data.ratings || []);
+        setStats({
+          average_rating: response.data.data.average_rating || 0,
+          total_ratings: response.data.data.total_ratings || 0
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content review-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>Reviews for {walkerName}</h2>
+          <button className="modal-close-btn" onClick={onClose}>×</button>
+        </div>
+        
+        <div className="modal-body">
+          <div className="review-stats">
+            <div className="stat-item">
+              <span className="stat-label">Average Rating:</span>
+              <div className="stat-value">
+                <RatingStars rating={Math.round(stats.average_rating)} />
+                <span className="rating-number">({stats.average_rating.toFixed(1)})</span>
+              </div>
+            </div>
+            <div className="stat-item">
+              <span className="stat-label">Total Reviews:</span>
+              <span className="stat-value">{stats.total_ratings}</span>
+            </div>
+          </div>
+
+          <div className="reviews-list">
+            {loading ? (
+              <p className="loading-text">Loading reviews...</p>
+            ) : reviews.length === 0 ? (
+              <p className="no-reviews-text">No reviews yet.</p>
+            ) : (
+              reviews.map((review) => (
+                <div key={review.id} className="review-item">
+                  <div className="review-header">
+                    <span className="review-owner">{review.owner_name}</span>
+                    <span className="review-date">
+                      {new Date(review.created_at).toLocaleDateString('id-ID', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </span>
+                  </div>
+                  <div className="review-rating">
+                    <RatingStars rating={review.rating} />
+                  </div>
+                  {review.review && (
+                    <p className="review-text">{review.review}</p>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Komponen Utama Detail Page
 function WalkerDetailPage({ userRole }) {
   
@@ -28,6 +119,7 @@ function WalkerDetailPage({ userRole }) {
   const [walker, setWalker] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   // Fetch walker detail dari backend
   useEffect(() => {
@@ -128,8 +220,17 @@ function WalkerDetailPage({ userRole }) {
             <div className="meta-row">
               <span className="meta-label">Rating</span>
               <span className="meta-separator">:</span>
-              <span className="meta-value">
+              <span className="meta-value rating-with-button">
                 <RatingStars rating={rating} />
+                <span className="rating-info">
+                  ({rating.toFixed(1)} / 5.0) • {walker.total_reviews || 0} reviews
+                </span>
+                <button 
+                  className="view-reviews-btn"
+                  onClick={() => setShowReviewModal(true)}
+                >
+                  Lihat Review
+                </button>
               </span>
             </div>
             
@@ -142,6 +243,14 @@ function WalkerDetailPage({ userRole }) {
           </div>
         </div>
       </div>
+
+      {/* Modal Review */}
+      <ReviewModal 
+        isOpen={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+        walkerId={walker?.id || walker?.user_id}
+        walkerName={name}
+      />
     </div>
   );
 }
