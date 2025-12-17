@@ -253,7 +253,7 @@ function HistoryPage({ userRole: propUserRole }) {
                       </div>
                     )}
 
-                    {item.rating && (
+                    {item.rating && userRole === "owner" && (
                       <div className="history-detail-row">
                         <span className="history-label">
                           <i className="fas fa-star"></i>
@@ -268,9 +268,16 @@ function HistoryPage({ userRole: propUserRole }) {
 
                   <div className="history-card-footer">
                     {item.status?.toLowerCase() === "completed" &&
-                      !item.rating && (
+                      !item.rating &&
+                      userRole === "owner" && (
                         <button className="history-action-btn">
                           <i className="fas fa-pen"></i> Leave Review
+                        </button>
+                      )}
+                    {item.rating &&
+                      userRole === "owner" && (
+                        <button className="history-action-btn" disabled>
+                          <i className="fas fa-check"></i> Review Submitted
                         </button>
                       )}
                     {item.status?.toLowerCase() === "pending" &&
