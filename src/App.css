@@ -568,10 +568,9 @@ body {
 .walker-detail-box {
   max-width: 800px;
   margin: 50px auto;
-  background-color: #c3d3e8; /* Biru Muda Background */
+  background-color: #4a70a9; /* Biru Muda Background */
   border-radius: 15px;
   padding: 40px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 .detail-content {
   display: flex;
@@ -585,7 +584,6 @@ body {
   background-color: #4a70a9;
   padding: 20px;
   border-radius: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 .detail-image {
   width: 100%;
@@ -614,23 +612,41 @@ body {
   color: white;
 }
 .meta-row {
-  display: flex;
+  /* Use grid so labels, separator and values align neatly even when value wraps */
+  display: grid;
+  grid-template-columns: 150px 20px 1fr;
+  gap: 10px;
   margin-bottom: 15px;
-  align-items: flex-start;
+  align-items: start; /* align top when value spans multiple lines */
   font-size: 18px;
 }
 .meta-label {
   font-weight: 600;
-  min-width: 120px;
+  align-self: start;
 }
 .meta-separator {
-  margin-right: 10px;
+  text-align: center;
   font-weight: bold;
 }
 .description-text {
-  flex: 1;
-  line-height: 1.5;
+  margin: 0; /* remove extra paragraph spacing */
+  line-height: 1.6;
   font-weight: 400;
+}
+
+/* Responsive: stack label and value on small screens */
+@media (max-width: 768px) {
+  .meta-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .meta-separator {
+    display: none;
+  }
+  .meta-label {
+    min-width: auto;
+  }
 }
 .fee-text {
   font-weight: 700;
@@ -2202,7 +2218,7 @@ body {
 
 .detail-content {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 4px;
 }
 
