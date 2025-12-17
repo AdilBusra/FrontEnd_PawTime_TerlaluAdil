@@ -64,6 +64,19 @@ function BookingPage({}) {
   const handleConfirmBooking = async (e) => {
     e.preventDefault();
 
+    // Check token
+    const token = localStorage.getItem("token");
+    if (!token) {
+      showAlert({
+        title: "Login Required",
+        message: "Token tidak ditemukan. Silakan login terlebih dahulu.",
+        type: "error",
+        confirmText: "OK",
+      });
+      navigate("/auth");
+      return;
+    }
+
     if (!walkerId) {
       showAlert({
         title: "Walker ID Required",
@@ -91,7 +104,8 @@ function BookingPage({}) {
         total_price: totalPrice,
       };
 
-      console.log("Sending booking:", payload);
+      console.log("📋 Sending booking:", payload);
+      console.log("🔐 Token:", token.substring(0, 20) + "...");
 
       // POST request ke backend
       const response = await api.post("/api/bookings", payload);
@@ -166,8 +180,8 @@ function BookingPage({}) {
                   type="tel"
                   id="phone"
                   value={bookingForm.phone}
-                  onChange={handleChange}
-                  required
+                  readOnly
+                  style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
                 />
               </div>
 

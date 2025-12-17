@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../api';
+import io from 'socket.io-client';
 
 // Kita gunakan 'isConfirmed' sebagai state untuk beralih antara Halaman 7 dan 8
 function StatusPage() {
@@ -14,6 +15,10 @@ function StatusPage() {
     const bookingId = location.state?.bookingId || null;
     const walkerName = location.state?.walkerName || "Pet Walker";
     const walkerId = location.state?.walkerId || null;
+
+    // Socket.IO config
+    const SOCKET_BASE = import.meta.env.VITE_SOCKET_BASE || import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
+    const SOCKET_PATH = import.meta.env.VITE_SOCKET_PATH || "/socket.io";
     
     const [bookingStatus, setBookingStatus] = useState('pending');
     const [isLoading, setIsLoading] = useState(true);
@@ -46,18 +51,75 @@ function StatusPage() {
     };
 
     // Initial fetch dan polling setiap 5 detik
+    // Also setup Socket.IO listener untuk real-time status updates
     useEffect(() => {
+        if (!bookingId) {
+            return;
+        }
+
         fetchBookingStatus();
         
-        // Poll setiap 5 detik jika status masih pending
-        const interval = setInterval(() => {
-            if (bookingStatus === 'pending') {
-                fetchBookingStatus();
-            }
-        }, 5000);
+        // Setup Socket.IO connection untuk real-time status updates
+        try {
+            const socket = io(SOCKET_BASE, {
+                path: SOCKET_PATH,
+                transports: ['websocket'],
+                withCredentials: false,
+                auth: {
+                    token: localStorage.getItem('token')
+                }
+            });
 
-        return () => clearInterval(interval);
-    }, [bookingId, bookingStatus]);
+            socket.on('connect', () => {
+                console.log('✅ Connected to Socket.io for real-time status');
+                // Join booking room untuk listen status changes
+                socket.emit('join_room', { bookingId });
+                console.log(`🚪 Joined room: booking-${bookingId}`);
+            });
+
+            // Listen untuk real-time status changes dari walker
+            socket.on('booking_status_changed', (data) => {
+                console.log('📊 Booking status changed (real-time):', data);
+                if (data?.status) {
+                    setBookingStatus(data.status);
+                    setBookingData(prev => ({
+                        ...prev,
+                        status: data.status,
+                        updated_at: data.timestamp || new Date().toISOString()
+                    }));
+                    setIsLoading(false);
+                }
+            });
+
+            socket.on('disconnect', () => {
+                console.log('❌ Disconnected from Socket.io');
+            });
+
+            // Fallback: Poll setiap 5 detik jika status masih pending (backup mechanism)
+            const interval = setInterval(() => {
+                if (bookingStatus === 'pending') {
+                    console.log('⏱️ Polling status (fallback)...');
+                    fetchBookingStatus();
+                }
+            }, 5000);
+
+            return () => {
+                clearInterval(interval);
+                socket.disconnect();
+            };
+        } catch (error) {
+            console.error('Socket.io connection error:', error);
+            
+            // Fallback ke polling jika Socket.IO gagal
+            const interval = setInterval(() => {
+                if (bookingStatus === 'pending') {
+                    fetchBookingStatus();
+                }
+            }, 5000);
+
+            return () => clearInterval(interval);
+        }
+    }, [bookingId, bookingStatus, SOCKET_BASE, SOCKET_PATH]);
 
     const handleRefresh = () => {
         setIsLoading(true);
