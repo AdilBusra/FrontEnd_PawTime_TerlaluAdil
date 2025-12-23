@@ -1,5 +1,5 @@
 // src/pages/RatingPage.jsx (Halaman 11)
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import AlertModal from "../components/AlertModal";
 import chris from "../assets/download(9).jpeg"; // Ambil gambar Christella dari mockData
@@ -21,14 +21,37 @@ function RatingPage() {
   const [review, setReview] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Debug: Log on mount
+  useEffect(() => {
+    console.log("🟦 RatingPage mounted with state:", {
+      bookingId,
+      walkerName,
+      walkerId,
+      locationState: location.state
+    });
+    
+    // Check token
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    console.log("🔐 Token exists:", !!token);
+    console.log("👤 User data exists:", !!user);
+    if (user) {
+      console.log("👤 User:", JSON.parse(user));
+    }
+  }, []);
+
   const handleRatingClick = (newRating) => {
+    console.log("⭐ Rating clicked:", newRating);
     setRating(newRating);
   };
 
   const handleSubmitRating = async (e) => {
     e.preventDefault();
+    console.log("🟡 handleSubmitRating called");
+    console.log("Current state:", { rating, bookingId, walkerId, review });
 
     if (rating === 0) {
+      console.warn("⚠️ Rating is 0");
       showAlert({
         title: "Rating Required",
         message: "Mohon berikan rating bintang terlebih dahulu.",
@@ -39,6 +62,7 @@ function RatingPage() {
     }
 
     if (!bookingId) {
+      console.warn("⚠️ Booking ID is missing:", bookingId);
       showAlert({
         title: "Booking ID Error",
         message:
@@ -51,6 +75,22 @@ function RatingPage() {
 
     try {
       setIsSubmitting(true);
+      console.log("🔄 Setting isSubmitting to true");
+
+      const token = localStorage.getItem("token");
+      console.log("🔐 Token check before submit:", !!token);
+      if (!token) {
+        console.warn("⚠️ No token found in localStorage!");
+        showAlert({
+          title: "Authentication Error",
+          message: "Token tidak ditemukan. Silakan login kembali.",
+          type: "error",
+          confirmText: "OK",
+          onConfirm: () => navigate("/auth")
+        });
+        setIsSubmitting(false);
+        return;
+      }
 
       const payload = {
         booking_id: bookingId,
@@ -59,11 +99,16 @@ function RatingPage() {
         review: review.trim() || null,
       };
 
-      console.log("Submitting rating:", payload);
+      console.log("📤 Submitting rating with payload:", payload);
+      console.log("📍 API Base URL:", api.defaults.baseURL);
+      console.log("🔐 Authorization header will be set:", `Bearer ${token.substring(0, 20)}...`);
 
       const response = await api.post("/api/ratings", payload);
 
-      console.log("Rating submitted:", response.data);
+      console.log("✅ Rating submitted successfully:", response.data);
+      console.log("Response status:", response.status);
+      console.log("Response headers:", response.headers);
+      
       showAlert({
         title: "Rating Submitted",
         message: `Terima kasih atas rating dan ulasannya untuk ${walkerName}!`,
@@ -72,10 +117,42 @@ function RatingPage() {
         onConfirm: () => navigate("/"),
       });
     } catch (error) {
-      console.error("Error submitting rating:", error);
-      const errorMessage =
-        error.response?.data?.message ||
-        "Gagal mengirim rating. Silakan coba lagi.";
+      console.error("❌ Error submitting rating:");
+      console.error("Error object:", error);
+      console.error("Error response:", error.response);
+      console.error("Error message:", error.message);
+      console.error("Error status:", error.response?.status);
+      console.error("Error data:", error.response?.data);
+      console.error("Error headers:", error.response?.headers);
+      console.error("Network error?:", !error.response);
+
+      let errorMessage = "Gagal mengirim rating. Silakan coba lagi.";
+      
+      if (error.response) {
+        // Server responded with error status
+        errorMessage = error.response.data?.message || `Server error: ${error.response.status}`;
+        
+        if (error.response.status === 401) {
+          errorMessage = "Session expired. Silakan login kembali.";
+          setTimeout(() => navigate("/auth"), 2000);
+        } else if (error.response.status === 403) {
+          errorMessage = "Anda tidak memiliki akses untuk rating walker ini.";
+        } else if (error.response.status === 409) {
+          errorMessage = "Anda sudah memberikan rating untuk booking ini.";
+        } else if (error.response.status === 400) {
+          errorMessage = error.response.data?.message || "Data tidak valid. Mohon cek kembali.";
+        }
+      } else if (error.request) {
+        // Request made but no response
+        console.error("Request made but no response:", error.request);
+        errorMessage = "Tidak ada respons dari server. Periksa koneksi internet Anda.";
+      } else {
+        // Error in request setup
+        errorMessage = `Error: ${error.message}`;
+      }
+      
+      console.log("Showing error alert with message:", errorMessage);
+      
       showAlert({
         title: "Error",
         message: errorMessage,
@@ -84,6 +161,7 @@ function RatingPage() {
       });
     } finally {
       setIsSubmitting(false);
+      console.log("🔄 Setting isSubmitting to false");
     }
   };
 
