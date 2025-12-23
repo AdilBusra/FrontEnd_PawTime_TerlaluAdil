@@ -1,9 +1,11 @@
 // src/pages/HistoryPage.jsx
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import api from "../api";
 
 function HistoryPage({ userRole: propUserRole }) {
+  const navigate = useNavigate();
   const [historyData, setHistoryData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,6 +29,34 @@ function HistoryPage({ userRole: propUserRole }) {
   };
 
   const userRole = getUserRole();
+
+  // Handler untuk tombol "Leave Review"
+  const handleLeaveReview = (bookingItem) => {
+    console.log("🟡 [handleLeaveReview] Clicked");
+    console.log("📋 Booking data:", bookingItem);
+
+    if (!bookingItem) {
+      console.error("❌ Booking data is missing");
+      return;
+    }
+
+    const { id: bookingId, walker_id: walkerId, walker_name: walkerName } = bookingItem;
+
+    console.log("📤 Navigating to RatingPage with:", {
+      bookingId,
+      walkerId,
+      walkerName,
+    });
+
+    // Navigate ke RatingPage dengan booking data
+    navigate("/rating", {
+      state: {
+        bookingId,
+        walkerId,
+        walkerName,
+      },
+    });
+  };
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -270,7 +300,10 @@ function HistoryPage({ userRole: propUserRole }) {
                     {item.status?.toLowerCase() === "completed" &&
                       !item.rating &&
                       userRole === "owner" && (
-                        <button className="history-action-btn">
+                        <button
+                          className="history-action-btn"
+                          onClick={() => handleLeaveReview(item)}
+                        >
                           <i className="fas fa-pen"></i> Leave Review
                         </button>
                       )}
